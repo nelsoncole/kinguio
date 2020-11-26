@@ -15,10 +15,10 @@ clean:
 
 test:
 	dd if=/dev/zero of=disk.vhd bs=512 count=8192 conv=noerror,sync
-	./fs disk.vhd bin/stage0.bin bin/stage1.bin
+	./fs -f disk.vhd -g bin/stage1.bin
 	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw
 	
 fs:
-	gcc -C fs.c -o fs
+	gcc -Wall -C fs.c -o fs
 	
 	
