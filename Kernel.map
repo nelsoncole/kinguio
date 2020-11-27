@@ -1,0 +1,88 @@
+
+A unir propriedades do programa
+
+Removida propriedade 0xc0000002 para unir main.o (0x3) e stage2.o (não encontrado)
+
+Descartar secções de entrada
+
+ .group         0x0000000000000000        0x8 main.o
+ .note.gnu.property
+                0x0000000000000000       0x1c main.o
+
+Configuração de Memória
+
+Nome :           Origem             Comprimento        Atributos
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Script de ligação e mapa de memória
+
+                0x0000000000011000                . = 0x11000
+                0x0000000000011000                _start = .
+
+.text           0x0000000000011000     0x1000 carregar endereço 0x0000000000001000
+                0x0000000000011000                code = .
+ *(.text)
+ .text          0x0000000000011000       0x15 stage2.o
+ .text          0x0000000000011015       0x6f main.o
+                0x0000000000011015                puts
+                0x0000000000011061                main
+ *(.rodata)
+ .rodata        0x0000000000011084       0x18 main.o
+                0x0000000000012000                . = ALIGN (0x1000)
+ *fill*         0x000000000001109c      0xf64 
+
+.iplt           0x0000000000012000        0x0 carregar endereço 0x0000000000002000
+ .iplt          0x0000000000012000        0x0 stage2.o
+
+.text.__x86.get_pc_thunk.ax
+                0x0000000000012000        0x4 carregar endereço 0x0000000000002000
+ .text.__x86.get_pc_thunk.ax
+                0x0000000000012000        0x4 main.o
+                0x0000000000012000                __x86.get_pc_thunk.ax
+
+.eh_frame       0x0000000000012004       0x70 carregar endereço 0x0000000000002004
+ .eh_frame      0x0000000000012004       0x70 main.o
+
+.rel.dyn        0x0000000000012074        0x0 carregar endereço 0x0000000000002074
+ .rel.got       0x0000000000012074        0x0 stage2.o
+ .rel.iplt      0x0000000000012074        0x0 stage2.o
+
+.data           0x0000000000012074      0xf8c carregar endereço 0x0000000000002074
+                0x0000000000012074                data = .
+ *(.data)
+ .data          0x0000000000012074        0x4 main.o
+                0x0000000000012074                vmm
+                0x0000000000013000                . = ALIGN (0x1000)
+ *fill*         0x0000000000012078      0xf88 
+
+.got            0x0000000000013000        0x0 carregar endereço 0x0000000000003000
+ .got           0x0000000000013000        0x0 stage2.o
+
+.got.plt        0x0000000000013000        0xc carregar endereço 0x0000000000003000
+ .got.plt       0x0000000000013000        0xc stage2.o
+                0x0000000000013000                _GLOBAL_OFFSET_TABLE_
+
+.igot.plt       0x000000000001300c        0x0 carregar endereço 0x000000000000300c
+ .igot.plt      0x000000000001300c        0x0 stage2.o
+
+.bss            0x000000000001300c     0x2ff4 carregar endereço 0x000000000000300c
+                0x000000000001300c                bss = .
+ *(.bss)
+ .bss           0x000000000001300c     0x2000 stage2.o
+ .bss           0x000000000001500c        0x0 main.o
+ *(COMMON)
+                0x0000000000016000                . = ALIGN (0x1000)
+ *fill*         0x000000000001500c      0xff4 
+                0x0000000000016000                _end = .
+LOAD stage2.o
+LOAD main.o
+OUTPUT(stage2.bin elf32-i386)
+
+.comment        0x0000000000000000       0x2a
+ .comment       0x0000000000000000       0x2a main.o
+                                         0x2b (tamanho antes do relaxamento)
+
+.note.GNU-stack
+                0x0000000000000000        0x0
+ .note.GNU-stack
+                0x0000000000000000        0x0 main.o

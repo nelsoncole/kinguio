@@ -1,3 +1,12 @@
+ASFLAGS  :=-f elf32 -O0
+CFLAGS32 :=-Wall -O0 -m32 -ffreestanding -nostdlib -nostdinc -I ./include
+LDFLAGS  :=-m elf_i386 -Map Kernel.map -T stage2/link.ld
+AS=nasm
+CC=gcc
+LD=ld
+
+objs= stage2.o main.o
+
 .PHONY: stage0.bin stage1.bin stage2.bin move clean test fs
 
 stage0.bin: stage0/stage0.asm
@@ -6,13 +15,20 @@ stage0.bin: stage0/stage0.asm
 stage1.bin: stage1/stage1.asm
 	nasm -i stage1 -f bin -o $@ $<
 	
-stage2.bin: stage2/stage2.asm
-	nasm -i stage2 -f bin -o $@ $<
+stage2.bin: $(objs)
+	$(LD) $(LDFLAGS) -o $@ $^
+#stage2
+%.o: stage2/%.asm
+	$(AS) $(ASFLAGS) $< -o $@
+	
+%.o: stage2/%.c
+	$(CC) $(CFLAGS32) -c -o $@ $<
 	
 	
 move:
 	mv *.bin bin
 clean:
+	rm *.o
 	rm bin/*.bin
 	rm fs
 	rm disk.vhd

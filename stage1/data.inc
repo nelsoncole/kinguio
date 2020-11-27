@@ -2,7 +2,7 @@ LDSBASE equ 0x600
 LDSPARAMETERSBASE equ 0x4000
 LDSVESABASE equ 0x4020
 
-string db "RUN: STAGE 1",0xd,0xa,0
+string db "RUN: STAGE 1 ==> 16-BIT",0xd,0xa,0
 string2 db "[PRESS ENTER TO CONTINUE ...]",0
 strerror db "BOOTLOADER ERROR",0
 

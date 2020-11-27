@@ -89,6 +89,24 @@ start:
 	jmp dword 0x8:ModoProtegido	; aqui vamos pular do stage1 para o setup
 	
 bits 32
+print32:
+	xor edi,edi
+	pushad
+	mov edi,[_vmm]
+.next:
+	lodsb
+	cmp al,0
+	jz .end
+	mov ah,0x2
+	cld
+	stosw
+	jmp .next
+.end:
+	popad
+	ret
+
+_vmm dd 0xb8000
+
 ModoProtegido:
     	mov eax,0x10
 	mov ds,ax
@@ -96,9 +114,10 @@ ModoProtegido:
 	mov fs,ax
 	mov gs,ax
 	mov ss,ax
-	mov esp,stack
+	mov esp, 0x90000
+	mov ebp, 0
 	
-	mov eax, 0x10000
+	mov eax, 0x11000
 
 	push ebx
 	push edx
@@ -110,5 +129,3 @@ ModoProtegido:
 	iretd
 		
 	hlt
-	resb 0x2000 ;8KiB
-stack:

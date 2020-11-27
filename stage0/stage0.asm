@@ -18,7 +18,7 @@
 	data_sector dd 0
 	root_dir dd 0
 	
-	string db "RUN: STAGE 0",0xd,0xa,0
+	string db "RUN: STAGE 0 ==> 16-BIT",0xd,0xa,0
 	strerr db "BOOTLOADER ERROR",0xd,0xa,0
 	dap times 16 db 0;
 	

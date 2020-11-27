@@ -1,31 +1,19 @@
 [bits 32]
-[org 0x10000]
+section .text
+extern main
+global _start
+_start:
 	jmp start
+	mov esp, _stack
+	mov ebp, 0;
 	
 	
 start:
-	mov esi,string
-	call print
+	
+	call main
 
 	hlt
 	
-	
-print:
-	xor edi,edi
-	pushad
-	mov edi,[_vmm]
-.next:
-	lodsb
-	cmp al,0
-	jz .end
-	mov ah,0x2
-	cld
-	stosw
-	jmp .next
-.end:
-	popad
-	ret
-
-_vmm dd 0xb8000 + 160 * 2
-
-string db "RUN: STAGE 2",0
+section .bss
+	resb 0x2000 ;8KiB
+_stack:
