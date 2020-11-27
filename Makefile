@@ -1,11 +1,11 @@
 ASFLAGS  :=-f elf32 -O0
-CFLAGS32 :=-Wall -O0 -m32 -ffreestanding -nostdlib -nostdinc -I ./include
+CFLAGS32 :=-Wall -O0 -m32 -ffreestanding -nostdlib -nostdinc -I ./stage2/include
 LDFLAGS  :=-m elf_i386 -Map Kernel.map -T stage2/link.ld
 AS=nasm
 CC=gcc
 LD=ld
 
-objs= stage2.o main.o
+objs= stage2.o main.o data.o stdlib.o string.o gui.o
 
 .PHONY: stage0.bin stage1.bin stage2.bin move clean test fs
 

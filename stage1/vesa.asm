@@ -110,7 +110,7 @@ vesa_vbe_mode:
 	pop ds
 
 ; Nelson Aqui, e por onde controlamos, o hablitar, desabiliatr do VBE, comentando descomentando o RET	
-	 ret	
+	 ;ret	
 ;   Define modo de video 
     
     	xor ebx,ebx

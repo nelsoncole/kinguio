@@ -2,12 +2,39 @@
 A unir propriedades do programa
 
 Removida propriedade 0xc0000002 para unir main.o (0x3) e stage2.o (não encontrado)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e data.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e stdlib.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e string.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e gui.o (0x3)
+
+Distribuindo símbolos comuns
+Símbolos comuns do tamanho do ficheiro
+
+gui                 0x4               gui.o
 
 Descartar secções de entrada
 
  .group         0x0000000000000000        0x8 main.o
  .note.gnu.property
                 0x0000000000000000       0x1c main.o
+ .note.gnu.property
+                0x0000000000000000       0x1c data.o
+ .group         0x0000000000000000        0x8 stdlib.o
+ .note.gnu.property
+                0x0000000000000000       0x1c stdlib.o
+ .group         0x0000000000000000        0x8 string.o
+ .text.__x86.get_pc_thunk.ax
+                0x0000000000000000        0x4 string.o
+ .note.gnu.property
+                0x0000000000000000       0x1c string.o
+ .group         0x0000000000000000        0x8 gui.o
+ .group         0x0000000000000000        0x8 gui.o
+ .text.__x86.get_pc_thunk.ax
+                0x0000000000000000        0x4 gui.o
+ .text.__x86.get_pc_thunk.bx
+                0x0000000000000000        0x4 gui.o
+ .note.gnu.property
+                0x0000000000000000       0x1c gui.o
 
 Configuração de Memória
 
@@ -23,37 +50,62 @@ Script de ligação e mapa de memória
                 0x0000000000011000                code = .
  *(.text)
  .text          0x0000000000011000       0x15 stage2.o
- .text          0x0000000000011015       0x6f main.o
-                0x0000000000011015                puts
-                0x0000000000011061                main
+ .text          0x0000000000011015       0x7c main.o
+                0x0000000000011015                main
+ .text          0x0000000000011091        0x0 data.o
+ .text          0x0000000000011091       0x76 stdlib.o
+                0x0000000000011091                initialize_heap
+                0x00000000000110d4                malloc
+ .text          0x0000000000011107       0x33 string.o
+                0x0000000000011107                memset
+ .text          0x000000000001113a      0x23b gui.o
+                0x000000000001113a                initialize_gui
+                0x00000000000112cf                put_pixel
+                0x000000000001130e                put_pixel_buff
  *(.rodata)
- .rodata        0x0000000000011084       0x18 main.o
                 0x0000000000012000                . = ALIGN (0x1000)
- *fill*         0x000000000001109c      0xf64 
+ *fill*         0x0000000000011375      0xc8b 
 
 .iplt           0x0000000000012000        0x0 carregar endereço 0x0000000000002000
  .iplt          0x0000000000012000        0x0 stage2.o
 
-.text.__x86.get_pc_thunk.ax
+.text.__x86.get_pc_thunk.bx
                 0x0000000000012000        0x4 carregar endereço 0x0000000000002000
- .text.__x86.get_pc_thunk.ax
+ .text.__x86.get_pc_thunk.bx
                 0x0000000000012000        0x4 main.o
-                0x0000000000012000                __x86.get_pc_thunk.ax
+                0x0000000000012000                __x86.get_pc_thunk.bx
 
-.eh_frame       0x0000000000012004       0x70 carregar endereço 0x0000000000002004
- .eh_frame      0x0000000000012004       0x70 main.o
+.text.__x86.get_pc_thunk.ax
+                0x0000000000012004        0x4 carregar endereço 0x0000000000002004
+ .text.__x86.get_pc_thunk.ax
+                0x0000000000012004        0x4 stdlib.o
+                0x0000000000012004                __x86.get_pc_thunk.ax
 
-.rel.dyn        0x0000000000012074        0x0 carregar endereço 0x0000000000002074
- .rel.got       0x0000000000012074        0x0 stage2.o
- .rel.iplt      0x0000000000012074        0x0 stage2.o
+.eh_frame       0x0000000000012008      0x148 carregar endereço 0x0000000000002008
+ .eh_frame      0x0000000000012008       0x60 main.o
+ .eh_frame      0x0000000000012068       0x58 stdlib.o
+                                         0x70 (tamanho antes do relaxamento)
+ .eh_frame      0x00000000000120c0       0x24 string.o
+                                         0x50 (tamanho antes do relaxamento)
+ .eh_frame      0x00000000000120e4       0x6c gui.o
+                                         0xac (tamanho antes do relaxamento)
 
-.data           0x0000000000012074      0xf8c carregar endereço 0x0000000000002074
-                0x0000000000012074                data = .
+.rel.dyn        0x0000000000012150        0x0 carregar endereço 0x0000000000002150
+ .rel.got       0x0000000000012150        0x0 stage2.o
+ .rel.iplt      0x0000000000012150        0x0 stage2.o
+ .rel.text      0x0000000000012150        0x0 stage2.o
+
+.data           0x0000000000012150      0xeb0 carregar endereço 0x0000000000002150
+                0x0000000000012150                data = .
  *(.data)
- .data          0x0000000000012074        0x4 main.o
-                0x0000000000012074                vmm
+ .data          0x0000000000012150        0x0 main.o
+ .data          0x0000000000012150        0x1 data.o
+                0x0000000000012150                dv_num
+ .data          0x0000000000012151        0x0 stdlib.o
+ .data          0x0000000000012151        0x0 string.o
+ .data          0x0000000000012151        0x0 gui.o
                 0x0000000000013000                . = ALIGN (0x1000)
- *fill*         0x0000000000012078      0xf88 
+ *fill*         0x0000000000012151      0xeaf 
 
 .got            0x0000000000013000        0x0 carregar endereço 0x0000000000003000
  .got           0x0000000000013000        0x0 stage2.o
@@ -70,19 +122,42 @@ Script de ligação e mapa de memória
  *(.bss)
  .bss           0x000000000001300c     0x2000 stage2.o
  .bss           0x000000000001500c        0x0 main.o
+ .bss           0x000000000001500c        0x4 data.o
+                0x000000000001500c                heap
+ .bss           0x0000000000015010        0x0 stdlib.o
+ .bss           0x0000000000015010        0x0 string.o
+ .bss           0x0000000000015010        0x0 gui.o
  *(COMMON)
+ COMMON         0x0000000000015010        0x4 gui.o
+                0x0000000000015010                gui
                 0x0000000000016000                . = ALIGN (0x1000)
- *fill*         0x000000000001500c      0xff4 
+ *fill*         0x0000000000015014      0xfec 
                 0x0000000000016000                _end = .
 LOAD stage2.o
 LOAD main.o
+LOAD data.o
+LOAD stdlib.o
+LOAD string.o
+LOAD gui.o
 OUTPUT(stage2.bin elf32-i386)
 
 .comment        0x0000000000000000       0x2a
  .comment       0x0000000000000000       0x2a main.o
                                          0x2b (tamanho antes do relaxamento)
+ .comment       0x000000000000002a       0x2b data.o
+ .comment       0x000000000000002a       0x2b stdlib.o
+ .comment       0x000000000000002a       0x2b string.o
+ .comment       0x000000000000002a       0x2b gui.o
 
 .note.GNU-stack
                 0x0000000000000000        0x0
  .note.GNU-stack
                 0x0000000000000000        0x0 main.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 data.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 stdlib.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 string.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 gui.o
