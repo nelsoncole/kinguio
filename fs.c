@@ -6,7 +6,7 @@ typedef struct _super_block {
 
 	char sig[8];				// 00 - 7
 	char name[16];				// 08 - 23
-	unsigned int reserved;		// 24 - 27
+	unsigned int reserved;			// 24 - 27
 	unsigned int byte_per_sector;		// 28 - 31
 	unsigned int sector_por_blk;		// 32 - 35
 	unsigned int num_of_blk;		// 36 - 39
@@ -35,7 +35,7 @@ typedef struct _directory_entry {
 
 unsigned int disk_size = 0;
 
-FILE *fd1, *fd2;
+FILE *fd1;
 
 unsigned char data[512];
 
@@ -43,8 +43,8 @@ unsigned char data[512];
 void read_super_block(FILE *fd,super_block *fs)
 {
 
-	// reserved - 1;
-	int off = (2-1)*512;
+	// inicio de particao + 1;
+	int off = 1*512;
 	
 	fseek (fd, off, SEEK_SET );
 	fread(fs,1,sizeof(super_block),fd);	
@@ -189,28 +189,56 @@ int write_blk(unsigned int new_blk,unsigned int cur_blk,FILE *fd,super_block *fs
 	return 0;
 }
 
-int create_file(const char *fname,FILE *fd,super_block *fs,directory_entry *directory) {
+char *get_file_name(const char *path)
+{
+	char *s = (char*) path;
+	char *r = s;
+
+	for(;*s != 0;s++) {
+	
+		if(*s == '/') {
+			r = s + 1;
+		}	
+	}
+
+	return r;
+}
+
+int create_file(const char *path,FILE *fd,super_block *fs,directory_entry *directory) {
+	int index;
+	unsigned int off;
 	
 	directory_entry *dir = directory;
 	directory_entry dir2[1];
 	
 	memset(dir,0,128);
 	
-	strcpy(dir->filename,fname);
+	strcpy(dir->filename,get_file_name(path));
+	
+	// Limpar os caracters nulo
+	off = 0;
+	for(index = 0; index < 96; index++) { 
+	
+		if(dir->filename[index] == 0 || off == 1) {
+		
+			dir->filename[index] = ' ';
+			off = 0;
+		}
+	}
+	
 	dir->filesize = 0;
       	
       	
       	unsigned int data_sector =  fs->reserved;
       	unsigned int root_sector = data_sector + (fs->root_blk * fs->sector_por_blk);
 	
-	int index;
-	unsigned int off;
+	
 	
 	// localizar blk disponivel
 	dir->blk = search_blk_null(fd,fs);
 	// verificar erro
 	if(dir->blk == -1) {
-		printf("Error ao criar o arquivo \"%s\"",fname);
+		printf("Error ao criar o arquivo \"%s\"",path);
 	 	return 1;
 	}
 
@@ -227,7 +255,7 @@ int create_file(const char *fname,FILE *fd,super_block *fs,directory_entry *dire
 	
 	
 	if(index >= 64 ) {
-		printf("Error ao criar o arquivo \"%s\", atingio o limite de arquivos na entrada de directorio",fname);
+		printf("Error ao criar o arquivo \"%s\", atingio o limite de arquivos na entrada de directorio",path);
 		return -1;
 	}
 	
@@ -235,6 +263,7 @@ int create_file(const char *fname,FILE *fd,super_block *fs,directory_entry *dire
 	// gravar directory
 	dir->entry = index;
 	dir->busy = -1;
+	dir->attr = 0x20; // archive
 	
 	off = (root_sector * fs->byte_per_sector) + (128*dir->entry);
 	fseek (fd, off, SEEK_SET );
@@ -245,13 +274,13 @@ int create_file(const char *fname,FILE *fd,super_block *fs,directory_entry *dire
 	return 0;
 }
 
-void copy(FILE *fd,super_block *fs,directory_entry *directory) {
+void copy(FILE *fd,super_block *fs,directory_entry *directory, const char *path) {
 
 	FILE *f;
 	directory_entry *dir = directory;
 	
-	if((f=fopen(directory->filename,"r+w"))==NULL) {
-		printf("Erro ao copiar  o arquivo: \"%s\"",directory->filename);
+	if((f=fopen(path,"r+w"))==NULL) {
+		printf("Erro ao copiar  o arquivo: \"%s\"",path);
 		return; 
 	}
 	
@@ -299,6 +328,8 @@ void copy(FILE *fd,super_block *fs,directory_entry *directory) {
 			off = first_sector * fs->byte_per_sector;
 			fseek (fd, off, SEEK_SET );
 			
+			fputc(getc(f),fd);
+			
 		} else fputc(getc(f),fd);
 		
 	}
@@ -312,6 +343,7 @@ void copy(FILE *fd,super_block *fs,directory_entry *directory) {
 int main(int argc, char **argv) {
 
 	int r,d,a,flg;
+	FILE *fd_boot;
 	
 
 	super_block fs;
@@ -413,12 +445,12 @@ int main(int argc, char **argv) {
       	root_dir(fd1,&fs);
 	
 	// Gravar o bootrecord
-	if((fd2=fopen("bin/stage0.bin","r+b"))==NULL){
+	if((fd_boot=fopen("bin/stage0.bin","r+b"))==NULL){
 		printf("Erro ao abrir o arquivo \"bootrecord\"");
 		exit(1); 
 	}
 	
-	r = fread(data,1,fs.byte_per_sector,fd2);
+	r = fread(data,1,fs.byte_per_sector,fd_boot);
 	
 	if(r != fs.byte_per_sector) {
 		printf("Erro ao copiar o sector de boot");
@@ -439,7 +471,7 @@ int main(int argc, char **argv) {
 		exit(1);
 	}
 	
-	fclose(fd2);
+	fclose(fd_boot);
 	fflush(fd1);
 	rewind(fd1);
 	
@@ -450,7 +482,7 @@ __gravar:
 	
 	// gravar arquivo
 	create_file(argv[a],fd1,&fs,directory);
-	copy(fd1,&fs,directory);
+	copy(fd1,&fs,directory,argv[a]);
 	printf("Copiado: %s, %d bytes, blk %d, dir entry %d\n",directory->filename, directory->filesize,directory->blk,directory->entry);
 	
 __end:

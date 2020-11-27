@@ -91,6 +91,7 @@ start:
 	mov ecx,eax	
 
 	mov eax, dword[esi+110];
+	xor edx,edx
 	div dword[byte_per_sector]
 	add eax,1
 	
@@ -142,7 +143,7 @@ read:
 	; BX --> Offset
 	; EAX --> Starting sector LBA47
 	
-	pusha
+	pushad
 	mov si,dap
 	mov [si + 0], byte 0x10	; Tamanho da DAP
 	mov [si + 1], byte 0		; reservado
@@ -155,11 +156,11 @@ read:
 	mov ah, 0x42
 	int 0x13
 	jc  err_
-	popa
+	popad
 	ret
 
 err_:	
-	popa
+	popad
 	jmp err
 
 times (0x1b8 - ($-$$)) nop

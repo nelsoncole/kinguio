@@ -48,8 +48,23 @@ start:
 
 
 
-; Carregar o setup
+; Carregar o setup ou stage2
 
+	mov word[filesystem_address],0x1000
+	mov word[file_address_di],0x1000
+	mov word[file_address_bx],0
+	
+	mov word[address_offset],0
+	
+	call file_read
+	cmp ax,0
+	je ._ok
+	mov si, strerror
+	call print
+	hlt
+._ok:
+
+	jmp 0x1000:0
 
 ; Definir o modo VESA
 	call vesa_vbe_mode
@@ -81,17 +96,3 @@ start:
 	;jmp dword 0x8:ModoProtegido	; aqui vamos pular do stage1 para o setup
 	
 	hlt
-	
-	
-;times (1024*32 - ($-$$)) nop
-string db "RUN: STAGE 1",0xd,0xa,0
-string2 db "[PRESS ENTER]",0
-
-
-
-
-
-
-
-
-
