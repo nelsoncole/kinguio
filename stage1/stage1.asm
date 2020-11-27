@@ -31,13 +31,6 @@ start:
 	call print
 	
 	
-	mov si,string2
-	call print
-	
-	xor ax,ax
-	int 0x16
-	
-	
 ; BIOSes Get Device Parameters
 	call GetDeviceParameters
 
@@ -61,14 +54,14 @@ start:
 	je ._ok
 	mov si, strerror
 	call print
-	hlt
+	
+	xor ax,ax
+	int 0x16
+	int 0x19
 ._ok:
-
-	jmp 0x1000:0
 
 ; Definir o modo VESA
 	call vesa_vbe_mode
-	
 	
 ; Mascara interrupções e desabilita NMI
 	
@@ -93,6 +86,29 @@ start:
 	mov dl,byte[dv_num]
 	mov ebx,dword[uid]
 	
-	;jmp dword 0x8:ModoProtegido	; aqui vamos pular do stage1 para o setup
+	jmp dword 0x8:ModoProtegido	; aqui vamos pular do stage1 para o setup
 	
+bits 32
+ModoProtegido:
+    	mov eax,0x10
+	mov ds,ax
+	mov es,ax
+	mov fs,ax
+	mov gs,ax
+	mov ss,ax
+	mov esp,stack
+	
+	mov eax, 0x10000
+
+	push ebx
+	push edx
+	push ss
+	push esp
+	pushf
+	push cs
+    	push eax
+	iretd
+		
 	hlt
+	resb 0x2000 ;8KiB
+stack:
