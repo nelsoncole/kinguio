@@ -2,6 +2,7 @@
 #define __GUI_H
 
 extern struct _gui *gui;
+extern short font8x16[128*16];
 
 typedef struct _gui
 {
@@ -26,12 +27,22 @@ typedef struct _gui
 	unsigned int width;
 	unsigned int height;
 	
+	//glyph
+	unsigned int cursor_x;
+	unsigned int cursor_y;
+	
 }__attribute__ ((packed)) gui_t;
 
 
 void initialize_gui();
 void put_pixel(long x, long y, unsigned int color);
 void put_pixel_buff(long x, long y, unsigned int color,void *buffer);
+void refresh_rate();
+void clears_creen();
+void draw_char_transparent( int x, int y, int ch, unsigned int fg_color, 
+							void *buffer,
+							void *font_buffer);
+int glyph(int ch, unsigned int color);
 
 
 #endif

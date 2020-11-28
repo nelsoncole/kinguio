@@ -101,9 +101,9 @@ file_read:
 	mov di,filename
 	mov si,word[filesystem_address]
 	add si,dx
-	sub bx,1
 	cmp bx,0
 	je ._error
+	sub bx,1
 	xor cx,cx
 	jmp ._1
 ._error:

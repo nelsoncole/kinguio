@@ -1,11 +1,13 @@
 #include <gui.h>
 #include <stdlib.h>
+#include <string.h>
 struct _gui *gui;
 
 extern void puts(const char *s);
 void initialize_gui()
 {
 	gui = (struct _gui*) malloc(sizeof(gui_t));
+	memset(gui,0,sizeof(gui_t));
 
 		// BIOS VESA Video and Audio
 	unsigned char *vbe = (unsigned char*)0x40200;
@@ -55,3 +57,74 @@ void put_pixel_buff(long x, long y, unsigned int color,void *buffer)
 	
 }
 
+void refresh_rate() 
+{
+	return; //NOTA 
+	
+	memcpy(gui->frame_buffer, gui->bank_buffer,\
+	gui->width * (gui->height) * (gui->bpp/8));
+	
+}
+
+
+void clears_creen() 
+{
+	memset(gui->frame_buffer/*G->BankBuffer*/,0,gui->width * (gui->height) * (gui->bpp/8));
+}
+
+
+void draw_char_transparent( int x, int y, int ch, unsigned int fg_color, 
+							void *buffer,
+							void *font_buffer)
+{
+	unsigned short font = 0;
+	const unsigned short *font_data = (unsigned short*) font_buffer;
+   	int cx, cy;
+	unsigned short mask;
+    
+   	for(cy=0;cy < 16;cy++){
+		mask = 1;
+        	font = font_data[(ch *16) + cy];
+		
+                for(cx = 8 -1 ;cx >= 0;cx--){ 
+                       if(font&mask){
+				//put_pixel_buff(x + cx,y + cy,fg_color,buffer);
+				put_pixel(x + cx,y + cy,fg_color);
+			}
+			mask += mask;
+                  
+          }
+        
+    }
+
+}
+
+
+int glyph(int ch, unsigned int color)
+{
+
+	if(ch == '\n') {
+	
+		gui->cursor_x = 0;
+		gui->cursor_y++;
+		return ch;
+	
+	}
+	
+	if(gui->cursor_y*16 >= gui->height) {
+	
+		gui->cursor_y = 0;
+	}
+	
+	if(gui->cursor_x*8 >= gui->width) {
+	
+		gui->cursor_x = 0;
+		gui->cursor_y++;
+	}
+
+	draw_char_transparent(gui->cursor_x*8, gui->cursor_y*16, ch, color, gui->bank_buffer,font8x16);
+	
+	gui->cursor_x++;
+	
+	return ch;
+}

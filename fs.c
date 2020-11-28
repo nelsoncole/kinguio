@@ -213,6 +213,14 @@ int create_file(const char *path,FILE *fd,super_block *fs,directory_entry *direc
 	
 	memset(dir,0,128);
 	
+	
+	FILE *f;
+	// Testar se arquivo existe
+	if((f=fopen(path,"r"))==NULL) {
+		printf("Erro '%s': Ficheiro ou pasta inexistente",path);
+		return -1; 
+	}
+	
 	strcpy(dir->filename,get_file_name(path));
 	
 	// Limpar os caracters nulo
@@ -481,9 +489,13 @@ int main(int argc, char **argv) {
 __gravar:
 	
 	// gravar arquivo
-	create_file(argv[a],fd1,&fs,directory);
-	copy(fd1,&fs,directory,argv[a]);
-	printf("Copiado: %s, %d bytes, blk %d, dir entry %d\n",directory->filename, directory->filesize,directory->blk,directory->entry);
+	r = create_file(argv[a],fd1,&fs,directory);
+	if(!r) {
+		copy(fd1,&fs,directory,argv[a]);
+		printf("Copiado: %s, %d bytes, blk %d, dir entry %d\n",
+		directory->filename, directory->filesize,directory->blk,directory->entry);
+	}
+	
 	
 __end:
 	fclose(fd1);

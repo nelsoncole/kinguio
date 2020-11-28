@@ -1,5 +1,7 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <gui.h>
+
 
 void main()
 {
@@ -8,8 +10,6 @@ void main()
 	
 	initialize_gui();
 	
-	for(int i=0;i < gui-> width-200;i++) put_pixel(i, 8, 0xff0000);
-
-	//puts("RUN: STAGE 2 ==> 32-BIT");
+	printf("RUN: STAGE 2 ==> %d-BIT",32);
 
 }
