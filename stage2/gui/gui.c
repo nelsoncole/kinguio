@@ -35,6 +35,10 @@ void initialize_gui()
 	gui->height 	= gui->vertical_resolution;
 
 
+	gui->font.x = 8;
+	gui->font.y = 16;
+	gui->font.buf = (unsigned long)font8x16;
+
 
 }
 
@@ -75,19 +79,19 @@ void clears_creen()
 
 void draw_char_transparent( int x, int y, int ch, unsigned int fg_color, 
 							void *buffer,
-							void *font_buffer)
+							struct _font *font)
 {
-	unsigned short font = 0;
-	const unsigned short *font_data = (unsigned short*) font_buffer;
+	unsigned short f = 0;
+	const unsigned short *font_data = (unsigned short*) font->buf;
    	int cx, cy;
 	unsigned short mask;
     
-   	for(cy=0;cy < 16;cy++){
+   	for(cy=0;cy < font->y ;cy++){
 		mask = 1;
-        	font = font_data[(ch *16) + cy];
+        	f = font_data[(ch *font->y) + cy];
 		
-                for(cx = 8 -1 ;cx >= 0;cx--){ 
-                       if(font&mask){
+                for(cx = font->x -1 ;cx >= 0;cx--){ 
+                       if(f&mask){
 				//put_pixel_buff(x + cx,y + cy,fg_color,buffer);
 				put_pixel(x + cx,y + cy,fg_color);
 			}
@@ -111,18 +115,18 @@ int glyph(int ch, unsigned int color)
 	
 	}
 	
-	if(gui->cursor_y*16 >= gui->height) {
+	if(gui->cursor_y*gui->font.y >= gui->height) {
 	
 		gui->cursor_y = 0;
 	}
 	
-	if(gui->cursor_x*8 >= gui->width) {
+	if(gui->cursor_x*gui->font.x >= gui->width) {
 	
 		gui->cursor_x = 0;
 		gui->cursor_y++;
 	}
 
-	draw_char_transparent(gui->cursor_x*8, gui->cursor_y*16, ch, color, gui->bank_buffer,font8x16);
+	draw_char_transparent(gui->cursor_x*gui->font.x, gui->cursor_y*gui->font.y, ch, color, gui->bank_buffer,&gui->font);
 	
 	gui->cursor_x++;
 	

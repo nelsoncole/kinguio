@@ -81,26 +81,27 @@ Script de ligação e mapa de memória
                 0x000000000001131f                memcpy
                 0x0000000000011370                strcpy
                 0x00000000000113c4                strlen
- .text          0x00000000000113f6      0x471 gui.o
+ .text          0x00000000000113f6      0x4db gui.o
                 0x00000000000113f6                initialize_gui
-                0x00000000000115a3                put_pixel
-                0x00000000000115e2                put_pixel_buff
-                0x0000000000011649                refresh_rate
-                0x000000000001165d                clears_creen
-                0x00000000000116be                draw_char_transparent
-                0x0000000000011758                glyph
- .text          0x0000000000011867        0x0 font8x16.o
- .text          0x0000000000011867      0x329 stdio.o
-                0x0000000000011867                putchar
-                0x0000000000011893                puts
-                0x00000000000118f3                printf
-                0x00000000000119a4                vsprintf
+                0x00000000000115d2                put_pixel
+                0x0000000000011611                put_pixel_buff
+                0x0000000000011678                refresh_rate
+                0x000000000001168c                clears_creen
+                0x00000000000116ed                draw_char_transparent
+                0x0000000000011797                glyph
+ .text          0x00000000000118d1        0x0 font8x16.o
+ .text          0x00000000000118d1      0x329 stdio.o
+                0x00000000000118d1                putchar
+                0x00000000000118fd                puts
+                0x000000000001195d                printf
+                0x0000000000011a0e                vsprintf
  *(.rodata)
- .rodata        0x0000000000011b90       0x1f main.o
- *fill*         0x0000000000011baf        0x1 
- .rodata        0x0000000000011bb0       0x88 stdio.o
+ *fill*         0x0000000000011bfa        0x2 
+ .rodata        0x0000000000011bfc       0x1f main.o
+ *fill*         0x0000000000011c1b        0x1 
+ .rodata        0x0000000000011c1c       0x88 stdio.o
                 0x0000000000012000                . = ALIGN (0x1000)
- *fill*         0x0000000000011c38      0x3c8 
+ *fill*         0x0000000000011ca4      0x35c 
 
 .iplt           0x0000000000012000        0x0 carregar endereço 0x0000000000002000
  .iplt          0x0000000000012000        0x0 stage2.o
@@ -117,21 +118,21 @@ Script de ligação e mapa de memória
                 0x0000000000012004        0x4 stdlib.o
                 0x0000000000012004                __x86.get_pc_thunk.ax
 
-.eh_frame       0x0000000000012008      0x328 carregar endereço 0x0000000000002008
+.eh_frame       0x0000000000012008      0x32c carregar endereço 0x0000000000002008
  .eh_frame      0x0000000000012008       0x60 main.o
  .eh_frame      0x0000000000012068       0x98 stdlib.o
                                          0xc4 (tamanho antes do relaxamento)
  .eh_frame      0x0000000000012100       0x84 string.o
                                          0xb0 (tamanho antes do relaxamento)
- .eh_frame      0x0000000000012184       0xfc gui.o
-                                        0x13c (tamanho antes do relaxamento)
- .eh_frame      0x0000000000012280       0xb0 stdio.o
+ .eh_frame      0x0000000000012184      0x100 gui.o
+                                        0x140 (tamanho antes do relaxamento)
+ .eh_frame      0x0000000000012284       0xb0 stdio.o
                                          0xf0 (tamanho antes do relaxamento)
 
-.rel.dyn        0x0000000000012330        0x0 carregar endereço 0x0000000000002330
- .rel.got       0x0000000000012330        0x0 stage2.o
- .rel.iplt      0x0000000000012330        0x0 stage2.o
- .rel.text      0x0000000000012330        0x0 stage2.o
+.rel.dyn        0x0000000000012334        0x0 carregar endereço 0x0000000000002334
+ .rel.got       0x0000000000012334        0x0 stage2.o
+ .rel.iplt      0x0000000000012334        0x0 stage2.o
+ .rel.text      0x0000000000012334        0x0 stage2.o
 
 .data           0x0000000000012340     0x1cc0 carregar endereço 0x0000000000002340
                 0x0000000000012340                data = .

@@ -3,6 +3,11 @@
 
 extern struct _gui *gui;
 extern short font8x16[128*16];
+typedef struct _font {
+	int x;
+	int y;
+	unsigned long buf;
+}__attribute__ ((packed)) font_t;
 
 typedef struct _gui
 {
@@ -31,7 +36,12 @@ typedef struct _gui
 	unsigned int cursor_x;
 	unsigned int cursor_y;
 	
+	// font
+	struct _font font;
+	
 }__attribute__ ((packed)) gui_t;
+
+
 
 
 void initialize_gui();
@@ -41,7 +51,7 @@ void refresh_rate();
 void clears_creen();
 void draw_char_transparent( int x, int y, int ch, unsigned int fg_color, 
 							void *buffer,
-							void *font_buffer);
+							struct _font *font);
 int glyph(int ch, unsigned int color);
 
 

@@ -27,6 +27,9 @@ stage2.bin: $(objs)
 %.o: stage2/lib/%.c
 	$(CC) $(CFLAGS32) -c -o $@ $<
 	
+%.o: stage2/gui/%.c
+	$(CC) $(CFLAGS32) -c -o $@ $<
+	
 	
 move:
 	mv *.bin bin
