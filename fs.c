@@ -336,9 +336,10 @@ void copy(FILE *fd,super_block *fs,directory_entry *directory, const char *path)
 			off = first_sector * fs->byte_per_sector;
 			fseek (fd, off, SEEK_SET );
 			
-			fputc(getc(f),fd);
 			
-		} else fputc(getc(f),fd);
+		}
+		
+		fputc(getc(f),fd);
 		
 	}
 	

@@ -5,5 +5,6 @@
 #define DEF_HEAP_LIMIT 0x01000000 // 16 MiB
 
 typedef unsigned size_t;
+#define NULL ((void *)0)
 
 #endif

@@ -5,7 +5,7 @@ AS=nasm
 CC=gcc
 LD=ld
 
-objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o
+objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o pci.o ata.o ahci.o storage.o
 
 .PHONY: stage0.bin stage1.bin stage2.bin move clean test fs
 
@@ -28,6 +28,9 @@ stage2.bin: $(objs)
 	$(CC) $(CFLAGS32) -c -o $@ $<
 	
 %.o: stage2/gui/%.c
+	$(CC) $(CFLAGS32) -c -o $@ $<
+	
+%.o: stage2/drive/%.c
 	$(CC) $(CFLAGS32) -c -o $@ $<
 	
 	
