@@ -23,6 +23,9 @@ stage2.bin: $(objs)
 	
 %.o: stage2/%.c
 	$(CC) $(CFLAGS32) -c -o $@ $<
+
+%.o: stage2/lib/%.c
+	$(CC) $(CFLAGS32) -c -o $@ $<
 	
 	
 move:
@@ -38,7 +41,7 @@ test:
 	./fs -f disk.vhd
 	./fs -g bin/stage1.bin disk.vhd
 	./fs -g bin/stage2.bin disk.vhd
-	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw
+	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw,bus=0
 	
 fs:
 	gcc -Wall -C fs.c -o fs

@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <gui.h>
 
-
+extern unsigned char dv_num;
+extern unsigned int dv_uid;
 void main()
 {
 
@@ -10,6 +11,6 @@ void main()
 	
 	initialize_gui();
 	
-	printf("RUN: STAGE 2 ==> %d-BIT",32);
+	printf("RUN: STAGE 2 ==> 32-BIT, %x %x",dv_num,dv_uid);
 
 }

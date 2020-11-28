@@ -13,7 +13,9 @@ Distribuindo símbolos comuns
 Símbolos comuns do tamanho do ficheiro
 
 r_printf_buf        0x800             stdio.o
+dv_uid              0x4               data.o
 gui                 0x4               gui.o
+dv_num              0x1               data.o
 
 Descartar secções de entrada
 
@@ -65,39 +67,40 @@ Script de ligação e mapa de memória
 .text           0x0000000000011000     0x1000 carregar endereço 0x0000000000001000
                 0x0000000000011000                code = .
  *(.text)
- .text          0x0000000000011000       0x15 stage2.o
- .text          0x0000000000011015       0x52 main.o
-                0x0000000000011015                main
- .text          0x0000000000011067        0x0 data.o
- .text          0x0000000000011067      0x289 stdlib.o
-                0x0000000000011067                initialize_heap
-                0x00000000000110aa                malloc
-                0x00000000000110dd                i2hex
-                0x00000000000111e4                itoa
- .text          0x00000000000112f0      0x10a string.o
-                0x00000000000112f0                memset
-                0x0000000000011323                memcpy
-                0x0000000000011374                strcpy
-                0x00000000000113c8                strlen
- .text          0x00000000000113fa      0x471 gui.o
-                0x00000000000113fa                initialize_gui
-                0x00000000000115a7                put_pixel
-                0x00000000000115e6                put_pixel_buff
-                0x000000000001164d                refresh_rate
-                0x0000000000011661                clears_creen
-                0x00000000000116c2                draw_char_transparent
-                0x000000000001175c                glyph
- .text          0x000000000001186b        0x0 font8x16.o
- .text          0x000000000001186b      0x329 stdio.o
-                0x000000000001186b                putchar
-                0x0000000000011897                puts
-                0x00000000000118f7                printf
-                0x00000000000119a8                vsprintf
+ .text          0x0000000000011000       0x21 stage2.o
+ .text          0x0000000000011021       0x66 main.o
+                0x0000000000011021                main
+ .text          0x0000000000011087        0x0 data.o
+ .text          0x0000000000011087      0x265 stdlib.o
+                0x0000000000011087                initialize_heap
+                0x00000000000110a6                malloc
+                0x00000000000110d9                i2hex
+                0x00000000000111e0                itoa
+ .text          0x00000000000112ec      0x10a string.o
+                0x00000000000112ec                memset
+                0x000000000001131f                memcpy
+                0x0000000000011370                strcpy
+                0x00000000000113c4                strlen
+ .text          0x00000000000113f6      0x471 gui.o
+                0x00000000000113f6                initialize_gui
+                0x00000000000115a3                put_pixel
+                0x00000000000115e2                put_pixel_buff
+                0x0000000000011649                refresh_rate
+                0x000000000001165d                clears_creen
+                0x00000000000116be                draw_char_transparent
+                0x0000000000011758                glyph
+ .text          0x0000000000011867        0x0 font8x16.o
+ .text          0x0000000000011867      0x329 stdio.o
+                0x0000000000011867                putchar
+                0x0000000000011893                puts
+                0x00000000000118f3                printf
+                0x00000000000119a4                vsprintf
  *(.rodata)
- .rodata        0x0000000000011b94       0x18 main.o
- .rodata        0x0000000000011bac       0x88 stdio.o
+ .rodata        0x0000000000011b90       0x1f main.o
+ *fill*         0x0000000000011baf        0x1 
+ .rodata        0x0000000000011bb0       0x88 stdio.o
                 0x0000000000012000                . = ALIGN (0x1000)
- *fill*         0x0000000000011c34      0x3cc 
+ *fill*         0x0000000000011c38      0x3c8 
 
 .iplt           0x0000000000012000        0x0 carregar endereço 0x0000000000002000
  .iplt          0x0000000000012000        0x0 stage2.o
@@ -114,37 +117,35 @@ Script de ligação e mapa de memória
                 0x0000000000012004        0x4 stdlib.o
                 0x0000000000012004                __x86.get_pc_thunk.ax
 
-.eh_frame       0x0000000000012008      0x32c carregar endereço 0x0000000000002008
+.eh_frame       0x0000000000012008      0x328 carregar endereço 0x0000000000002008
  .eh_frame      0x0000000000012008       0x60 main.o
- .eh_frame      0x0000000000012068       0x9c stdlib.o
-                                         0xc8 (tamanho antes do relaxamento)
- .eh_frame      0x0000000000012104       0x84 string.o
+ .eh_frame      0x0000000000012068       0x98 stdlib.o
+                                         0xc4 (tamanho antes do relaxamento)
+ .eh_frame      0x0000000000012100       0x84 string.o
                                          0xb0 (tamanho antes do relaxamento)
- .eh_frame      0x0000000000012188       0xfc gui.o
+ .eh_frame      0x0000000000012184       0xfc gui.o
                                         0x13c (tamanho antes do relaxamento)
- .eh_frame      0x0000000000012284       0xb0 stdio.o
+ .eh_frame      0x0000000000012280       0xb0 stdio.o
                                          0xf0 (tamanho antes do relaxamento)
 
-.rel.dyn        0x0000000000012334        0x0 carregar endereço 0x0000000000002334
- .rel.got       0x0000000000012334        0x0 stage2.o
- .rel.iplt      0x0000000000012334        0x0 stage2.o
- .rel.text      0x0000000000012334        0x0 stage2.o
+.rel.dyn        0x0000000000012330        0x0 carregar endereço 0x0000000000002330
+ .rel.got       0x0000000000012330        0x0 stage2.o
+ .rel.iplt      0x0000000000012330        0x0 stage2.o
+ .rel.text      0x0000000000012330        0x0 stage2.o
 
 .data           0x0000000000012340     0x1cc0 carregar endereço 0x0000000000002340
                 0x0000000000012340                data = .
  *(.data)
  .data          0x0000000000012340        0x0 main.o
- .data          0x0000000000012340        0x1 data.o
-                0x0000000000012340                dv_num
- .data          0x0000000000012341        0x0 stdlib.o
- .data          0x0000000000012341        0x0 string.o
- .data          0x0000000000012341        0x0 gui.o
- *fill*         0x0000000000012341       0x1f 
- .data          0x0000000000012360     0x1000 font8x16.o
-                0x0000000000012360                font8x16
- .data          0x0000000000013360        0x0 stdio.o
+ .data          0x0000000000012340        0x0 data.o
+ .data          0x0000000000012340        0x0 stdlib.o
+ .data          0x0000000000012340        0x0 string.o
+ .data          0x0000000000012340        0x0 gui.o
+ .data          0x0000000000012340     0x1000 font8x16.o
+                0x0000000000012340                font8x16
+ .data          0x0000000000013340        0x0 stdio.o
                 0x0000000000014000                . = ALIGN (0x1000)
- *fill*         0x0000000000013360      0xca0 
+ *fill*         0x0000000000013340      0xcc0 
 
 .got            0x0000000000014000        0x0 carregar endereço 0x0000000000004000
  .got           0x0000000000014000        0x0 stage2.o
@@ -169,9 +170,13 @@ Script de ligação e mapa de memória
  .bss           0x0000000000016024        0x0 font8x16.o
  .bss           0x0000000000016024        0x0 stdio.o
  *(COMMON)
- COMMON         0x0000000000016024        0x4 gui.o
-                0x0000000000016024                gui
- *fill*         0x0000000000016028       0x18 
+ COMMON         0x0000000000016024        0x5 data.o
+                0x0000000000016024                dv_uid
+                0x0000000000016028                dv_num
+ *fill*         0x0000000000016029        0x3 
+ COMMON         0x000000000001602c        0x4 gui.o
+                0x000000000001602c                gui
+ *fill*         0x0000000000016030       0x10 
  COMMON         0x0000000000016040      0x800 stdio.o
                 0x0000000000016040                r_printf_buf
                 0x0000000000017000                . = ALIGN (0x1000)

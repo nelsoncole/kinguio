@@ -39,7 +39,9 @@ start:
 
 ; Testa a Gate A20 
 
+; Carrega uid
 
+	mov dword[uid], 0
 
 ; Carregar o setup ou stage2
 
