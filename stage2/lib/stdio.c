@@ -6,7 +6,7 @@
 
 int putchar(int c)
 {
-	return (glyph(c, -1));
+	return (glyph(c));
 
 }
 

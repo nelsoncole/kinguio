@@ -6,6 +6,8 @@ extern short font8x16[128*16];
 typedef struct _font {
 	int x;
 	int y;
+	unsigned int fg_color;
+	unsigned int bg_color;
 	unsigned long buf;
 }__attribute__ ((packed)) font_t;
 
@@ -52,7 +54,7 @@ void clears_creen();
 void draw_char_transparent( int x, int y, int ch, unsigned int fg_color, 
 							void *buffer,
 							struct _font *font);
-int glyph(int ch, unsigned int color);
+int glyph(int ch);
 
 
 #endif

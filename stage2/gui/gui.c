@@ -37,6 +37,8 @@ void initialize_gui()
 
 	gui->font.x = 8;
 	gui->font.y = 16;
+	gui->font.fg_color = 0xffffff;
+	gui->font.bg_color = 0;
 	gui->font.buf = (unsigned long)font8x16;
 
 
@@ -104,7 +106,7 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 }
 
 
-int glyph(int ch, unsigned int color)
+int glyph(int ch)
 {
 
 	if(ch == '\n') {
@@ -126,7 +128,7 @@ int glyph(int ch, unsigned int color)
 		gui->cursor_y++;
 	}
 
-	draw_char_transparent(gui->cursor_x*gui->font.x, gui->cursor_y*gui->font.y, ch, color, gui->bank_buffer,&gui->font);
+	draw_char_transparent(gui->cursor_x*gui->font.x, gui->cursor_y*gui->font.y, ch, gui->font.fg_color, gui->bank_buffer,&gui->font);
 	
 	gui->cursor_x++;
 	

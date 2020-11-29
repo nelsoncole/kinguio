@@ -563,6 +563,8 @@ int ata_write_sector(int p, int count, unsigned long long/*UINT64*/ addr, void *
 int ata_initialize()
 {
 
+	printf("Initializing the ATA Controller:\n");
+
 	memset(ata,0,sizeof(ata_t)*32);
 
 	int p;
@@ -599,6 +601,8 @@ int ata_initialize()
 	switch(ata->device) {
     		
     		case ATA_IDE_CONTROLLER:
+    		
+    			printf("IDE Controller:\n");
 			// Install  bus, ports IDE
     			ata_bus_install(0,14/*IDE_IRQ14*/,0,ATA_PRIMARY,ATA_BAR0,ATA_BAR1,ATA_BAR4 + 0);
     			ata_bus_install(1,14/*IDE_IRQ14*/,1,ATA_PRIMARY,ATA_BAR0,ATA_BAR1,ATA_BAR4 + 0);
@@ -611,8 +615,10 @@ int ata_initialize()
 			ata_record_dev = ata_record_channel = -1;
 		break;
 		case ATA_AHCI_CONTROLLER:
+		
+			printf("AHCI Controller:\n");
 
-    			// FIXME Aqui, vamos mapear o BAR5
+    			// FIXME: se paginação é habilitada, aqui vamos mapear o BAR5
     			ahci_initialize(ATA_BAR5);
 
 		break;

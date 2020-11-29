@@ -59,9 +59,6 @@ static int sata_port_initialize(HBA_MEM_T *mmio);
 
 void ahci_initialize (unsigned int mmio /*ABAR*/) {
 
-
-	printf("AHCI initialize\n");
-
 	HBA_BASE = (unsigned int) malloc(0x10000); // 64 KiB
 	// FIXME É importante que este endereço seja o físico na memória
 	dmaphys =(unsigned char*) malloc(0x10000); // 64 KiB;
@@ -434,7 +431,7 @@ static int sata_port_initialize(HBA_MEM_T *mmio)
 	// salve
 	ata->ptotal = total_np;
 
-	printf("Serial ATA, total np %d pi 0x%x mmio->ghc = 0x%x\n",total_np,pi,mmio->ghc);
+	printf("Serial ATA, total np %d, pi 0x%x, mmio->ghc = 0x%x\n",total_np,pi,mmio->ghc);
 	
 	
     	for(i =0;i < total_np;i++)

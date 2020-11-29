@@ -66,6 +66,8 @@ typedef struct _ata
 }__attribute__ ((packed)) ata_t;
 
 
+extern unsigned char dv_num;
+extern unsigned int dv_uid;
 
 extern ata_t ata[32];
 

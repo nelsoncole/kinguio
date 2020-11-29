@@ -269,6 +269,9 @@ int pci_get_info(void *buffer,int max_bus)
 	unsigned int data = -1;
 	int bus, dev, fun,i;
 
+
+	printf("PCI Listing devices:\n");
+
 	for(bus = 0;bus < max_bus; bus++) {
 		for(dev = 0; dev < MAX_DEV; dev++) {
 			for(fun = 0; fun < MAX_FUN; fun++) {
