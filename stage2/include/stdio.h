@@ -29,8 +29,31 @@ int printf(const char *fmt, ...);
 
 
 // Virtual File System
+/*
+ *
+ * Flags
+ * 0x2  =stdin
+ * 0x3  =stdout
+ * 0x4  =stderr 
+ * 0x10 = Leitura
+ * 0x20 = Arquivo
+ * 0x40 = Pronto
+ * 0x80 = File null
+ * 0x88 = Spin lock
+ * 	
+ */
 typedef struct _FILE {
-
+	short 		level;		// Nível do buffer cheio/vazio
+	unsigned 	flags;		// Sinalizadores de status
+	char 		fd;		// Descritor de arquivo
+	unsigned char 	hold;		// Caractere ungetc se não existir um buffer
+	unsigned 	bsize;		// Tamanho do buffer
+	unsigned char 	*buffer;	// Buffer de transferência
+	unsigned char 	*curp;		// Ponteiro activo atual
+	unsigned 	istemp;	// Indicador de arquivo temporário
+	short 		token;		// Usado para verificação de validade
+	//
+	unsigned char 	mode[4];
 
 
 }__attribute__ ((packed)) FILE;
