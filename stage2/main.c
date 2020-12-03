@@ -4,6 +4,7 @@
 #include <gui.h>
 #include <pci.h>
 #include <storage.h>
+#include <fs.h>
 
 void main()
 {
@@ -20,6 +21,8 @@ void main()
 
 	ata_initialize();
 	printf("===============================================\n");
+	
+	testfs();
 	
 
 }

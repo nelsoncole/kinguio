@@ -5,7 +5,8 @@
 typedef struct _super_block {
 
 	char sig[8];				// 00 - 7
-	char name[16];				// 08 - 23
+	char name[12];				// 08 - 19
+	unsigned int hidden;			// 20 - 23
 	unsigned int reserved;			// 24 - 27
 	unsigned int byte_per_sector;		// 28 - 31
 	unsigned int sector_por_blk;		// 32 - 35

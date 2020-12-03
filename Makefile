@@ -5,7 +5,7 @@ AS=nasm
 CC=gcc
 LD=ld
 
-objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o pci.o ata.o ahci.o storage.o
+objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o pci.o ata.o ahci.o storage.o fs.o
 
 .PHONY: stage0.bin stage1.bin stage2.bin move clean test fs
 
@@ -32,6 +32,9 @@ stage2.bin: $(objs)
 	
 %.o: stage2/drive/%.c
 	$(CC) $(CFLAGS32) -c -o $@ $<
+
+%.o: stage2/fs/%.c
+	$(CC) $(CFLAGS32) -c -o $@ $<
 	
 	
 move:
@@ -47,6 +50,7 @@ test:
 	./fs -f disk.vhd
 	./fs -g bin/stage1.bin disk.vhd
 	./fs -g bin/stage2.bin disk.vhd
+	./fs -g README.md disk.vhd
 	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw,bus=0
 	
 fs:

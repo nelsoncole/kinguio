@@ -12,6 +12,7 @@ Removida propriedade 0xc0000002 para unir main.o (não encontrado) e pci.o (0x3)
 Removida propriedade 0xc0000002 para unir main.o (não encontrado) e ata.o (0x3)
 Removida propriedade 0xc0000002 para unir main.o (não encontrado) e ahci.o (0x3)
 Removida propriedade 0xc0000002 para unir main.o (não encontrado) e storage.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e fs.o (0x3)
 
 Distribuindo símbolos comuns
 Símbolos comuns do tamanho do ficheiro
@@ -101,6 +102,17 @@ Descartar secções de entrada
                 0x0000000000000000        0x4 storage.o
  .note.gnu.property
                 0x0000000000000000       0x1c storage.o
+ .group         0x0000000000000000        0x8 fs.o
+ .group         0x0000000000000000        0x8 fs.o
+ .group         0x0000000000000000        0x8 fs.o
+ .text.__x86.get_pc_thunk.ax
+                0x0000000000000000        0x4 fs.o
+ .text.__x86.get_pc_thunk.cx
+                0x0000000000000000        0x4 fs.o
+ .text.__x86.get_pc_thunk.bx
+                0x0000000000000000        0x4 fs.o
+ .note.gnu.property
+                0x0000000000000000       0x1c fs.o
 
 Configuração de Memória
 
@@ -116,78 +128,86 @@ Script de ligação e mapa de memória
                 0x0000000000011000                code = .
  *(.text)
  .text          0x0000000000011000       0x21 stage2.o
- .text          0x0000000000011021       0xac main.o
+ .text          0x0000000000011021       0xb1 main.o
                 0x0000000000011021                main
- .text          0x00000000000110cd        0x0 data.o
- .text          0x00000000000110cd      0x265 stdlib.o
-                0x00000000000110cd                initialize_heap
-                0x00000000000110ec                malloc
-                0x000000000001111f                i2hex
-                0x0000000000011226                itoa
- .text          0x0000000000011332      0x10a string.o
-                0x0000000000011332                memset
-                0x0000000000011365                memcpy
-                0x00000000000113b6                strcpy
-                0x000000000001140a                strlen
- .text          0x000000000001143c      0x508 gui.o
-                0x000000000001143c                initialize_gui
-                0x0000000000011636                put_pixel
-                0x0000000000011675                put_pixel_buff
-                0x00000000000116dc                refresh_rate
-                0x00000000000116f0                clears_creen
-                0x0000000000011751                draw_char_transparent
-                0x00000000000117fb                glyph
- .text          0x0000000000011944        0x0 font8x16.o
- .text          0x0000000000011944      0x327 stdio.o
-                0x0000000000011944                putchar
-                0x000000000001196e                puts
-                0x00000000000119ce                printf
-                0x0000000000011a7f                vsprintf
- .text          0x0000000000011c6b      0x6a2 pci.o
-                0x0000000000011c6b                read_pci_config_addr
-                0x0000000000011ccb                write_pci_config_addr
-                0x0000000000011d24                pci_read_config_dword
-                0x0000000000011d84                pci_write_config_dword
-                0x0000000000011ddd                pci_get_info
-                0x0000000000011f1a                pci_scan_bcc
-                0x0000000000011fea                pci_scan_class
-                0x00000000000120c8                pci_scan_bcc_scc
-                0x00000000000121a9                pci_scan_bcc_scc_prog
-                0x000000000001229f                pci_scan_vendor
-                0x00000000000122c1                pci_check_vendor
-                0x00000000000122e3                pci_size
- .text          0x000000000001230d     0x1604 ata.o
-                0x000000000001230d                ata_wait
-                0x00000000000123a1                ata_status_read
-                0x00000000000123db                ata_wait_not_busy
-                0x0000000000012422                ata_wait_busy
-                0x0000000000012469                ata_wait_no_drq
-                0x00000000000124ae                ata_wait_drq
-                0x00000000000124f3                ata_cmd_write
-                0x000000000001253d                ata_soft_reset
-                0x00000000000125b8                ata_pio_read
-                0x00000000000125f2                ata_pio_write
-                0x00000000000132a3                ata_read_sector
-                0x000000000001340d                ata_write_sector
-                0x00000000000135c3                ata_initialize
- .text          0x0000000000013911     0x1351 ahci.o
-                0x0000000000013911                ahci_initialize
-                0x00000000000149da                sata_read_sector
-                0x0000000000014b1e                sata_write_sector
- .text          0x0000000000014c62      0x1c6 storage.o
-                0x0000000000014c62                read_sector
-                0x0000000000014d45                write_sector
+ .text          0x00000000000110d2        0x0 data.o
+ .text          0x00000000000110d2      0x265 stdlib.o
+                0x00000000000110d2                initialize_heap
+                0x00000000000110f1                malloc
+                0x0000000000011124                i2hex
+                0x000000000001122b                itoa
+ .text          0x0000000000011337      0x10a string.o
+                0x0000000000011337                memset
+                0x000000000001136a                memcpy
+                0x00000000000113bb                strcpy
+                0x000000000001140f                strlen
+ .text          0x0000000000011441      0x508 gui.o
+                0x0000000000011441                initialize_gui
+                0x000000000001163b                put_pixel
+                0x000000000001167a                put_pixel_buff
+                0x00000000000116e1                refresh_rate
+                0x00000000000116f5                clears_creen
+                0x0000000000011756                draw_char_transparent
+                0x0000000000011800                glyph
+ .text          0x0000000000011949        0x0 font8x16.o
+ .text          0x0000000000011949      0x327 stdio.o
+                0x0000000000011949                putchar
+                0x0000000000011973                puts
+                0x00000000000119d3                printf
+                0x0000000000011a84                vsprintf
+ .text          0x0000000000011c70      0x6a2 pci.o
+                0x0000000000011c70                read_pci_config_addr
+                0x0000000000011cd0                write_pci_config_addr
+                0x0000000000011d29                pci_read_config_dword
+                0x0000000000011d89                pci_write_config_dword
+                0x0000000000011de2                pci_get_info
+                0x0000000000011f1f                pci_scan_bcc
+                0x0000000000011fef                pci_scan_class
+                0x00000000000120cd                pci_scan_bcc_scc
+                0x00000000000121ae                pci_scan_bcc_scc_prog
+                0x00000000000122a4                pci_scan_vendor
+                0x00000000000122c6                pci_check_vendor
+                0x00000000000122e8                pci_size
+ .text          0x0000000000012312     0x1604 ata.o
+                0x0000000000012312                ata_wait
+                0x00000000000123a6                ata_status_read
+                0x00000000000123e0                ata_wait_not_busy
+                0x0000000000012427                ata_wait_busy
+                0x000000000001246e                ata_wait_no_drq
+                0x00000000000124b3                ata_wait_drq
+                0x00000000000124f8                ata_cmd_write
+                0x0000000000012542                ata_soft_reset
+                0x00000000000125bd                ata_pio_read
+                0x00000000000125f7                ata_pio_write
+                0x00000000000132a8                ata_read_sector
+                0x0000000000013412                ata_write_sector
+                0x00000000000135c8                ata_initialize
+ .text          0x0000000000013916     0x1351 ahci.o
+                0x0000000000013916                ahci_initialize
+                0x00000000000149df                sata_read_sector
+                0x0000000000014b23                sata_write_sector
+ .text          0x0000000000014c67      0x1c6 storage.o
+                0x0000000000014c67                read_sector
+                0x0000000000014d4a                write_sector
+ .text          0x0000000000014e2d      0x3ac fs.o
+                0x0000000000014e2d                filename_cmp
+                0x0000000000014ed6                read_super_block
+                0x0000000000014f16                read_directory_entry
+                0x000000000001500d                read_block
+                0x0000000000015049                testfs
  *(.rodata)
- .rodata        0x0000000000014e28       0x5b main.o
- *fill*         0x0000000000014e83        0x1 
- .rodata        0x0000000000014e84       0x88 stdio.o
- .rodata        0x0000000000014f0c     0x1532 pci.o
- *fill*         0x000000000001643e        0x2 
- .rodata        0x0000000000016440      0x1c9 ata.o
- *fill*         0x0000000000016609        0x3 
- .rodata        0x000000000001660c      0x110 ahci.o
+ *fill*         0x00000000000151d9        0x3 
+ .rodata        0x00000000000151dc       0x5b main.o
+ *fill*         0x0000000000015237        0x1 
+ .rodata        0x0000000000015238       0x88 stdio.o
+ .rodata        0x00000000000152c0     0x1532 pci.o
+ *fill*         0x00000000000167f2        0x2 
+ .rodata        0x00000000000167f4      0x1c9 ata.o
+ *fill*         0x00000000000169bd        0x3 
+ .rodata        0x00000000000169c0      0x110 ahci.o
+ .rodata        0x0000000000016ad0       0x5d fs.o
                 0x0000000000017000                . = ALIGN (0x1000)
- *fill*         0x000000000001671c      0x8e4 
+ *fill*         0x0000000000016b2d      0x4d3 
 
 .iplt           0x0000000000017000        0x0 carregar endereço 0x0000000000007000
  .iplt          0x0000000000017000        0x0 stage2.o
@@ -216,7 +236,7 @@ Script de ligação e mapa de memória
                 0x000000000001700c        0x4 ahci.o
                 0x000000000001700c                __x86.get_pc_thunk.dx
 
-.eh_frame       0x0000000000017010      0x9e0 carregar endereço 0x0000000000007010
+.eh_frame       0x0000000000017010      0xa94 carregar endereço 0x0000000000007010
  .eh_frame      0x0000000000017010       0x60 main.o
  .eh_frame      0x0000000000017070       0x98 stdlib.o
                                          0xc4 (tamanho antes do relaxamento)
@@ -234,29 +254,32 @@ Script de ligação e mapa de memória
                                         0x294 (tamanho antes do relaxamento)
  .eh_frame      0x0000000000017998       0x58 storage.o
                                          0x84 (tamanho antes do relaxamento)
+ .eh_frame      0x00000000000179f0       0xb4 fs.o
+                                        0x108 (tamanho antes do relaxamento)
 
-.rel.dyn        0x00000000000179f0        0x0 carregar endereço 0x00000000000079f0
- .rel.got       0x00000000000179f0        0x0 stage2.o
- .rel.iplt      0x00000000000179f0        0x0 stage2.o
- .rel.text      0x00000000000179f0        0x0 stage2.o
+.rel.dyn        0x0000000000017aa4        0x0 carregar endereço 0x0000000000007aa4
+ .rel.got       0x0000000000017aa4        0x0 stage2.o
+ .rel.iplt      0x0000000000017aa4        0x0 stage2.o
+ .rel.text      0x0000000000017aa4        0x0 stage2.o
 
-.data           0x0000000000017a00     0x1600 carregar endereço 0x0000000000007a00
-                0x0000000000017a00                data = .
+.data           0x0000000000017ac0     0x1540 carregar endereço 0x0000000000007ac0
+                0x0000000000017ac0                data = .
  *(.data)
- .data          0x0000000000017a00        0x0 main.o
- .data          0x0000000000017a00        0x0 data.o
- .data          0x0000000000017a00        0x0 stdlib.o
- .data          0x0000000000017a00        0x0 string.o
- .data          0x0000000000017a00        0x0 gui.o
- .data          0x0000000000017a00     0x1000 font8x16.o
-                0x0000000000017a00                font8x16
- .data          0x0000000000018a00        0x0 stdio.o
- .data          0x0000000000018a00        0x0 pci.o
- .data          0x0000000000018a00        0x0 ata.o
- .data          0x0000000000018a00        0x0 ahci.o
- .data          0x0000000000018a00        0x0 storage.o
+ .data          0x0000000000017ac0        0x0 main.o
+ .data          0x0000000000017ac0        0x0 data.o
+ .data          0x0000000000017ac0        0x0 stdlib.o
+ .data          0x0000000000017ac0        0x0 string.o
+ .data          0x0000000000017ac0        0x0 gui.o
+ .data          0x0000000000017ac0     0x1000 font8x16.o
+                0x0000000000017ac0                font8x16
+ .data          0x0000000000018ac0        0x0 stdio.o
+ .data          0x0000000000018ac0        0x0 pci.o
+ .data          0x0000000000018ac0        0x0 ata.o
+ .data          0x0000000000018ac0        0x0 ahci.o
+ .data          0x0000000000018ac0        0x0 storage.o
+ .data          0x0000000000018ac0        0x0 fs.o
                 0x0000000000019000                . = ALIGN (0x1000)
- *fill*         0x0000000000018a00      0x600 
+ *fill*         0x0000000000018ac0      0x540 
 
 .got            0x0000000000019000        0x0 carregar endereço 0x0000000000009000
  .got           0x0000000000019000        0x0 stage2.o
@@ -295,6 +318,7 @@ Script de ligação e mapa de memória
                 0x000000000001bc44                ata_pci
  .bss           0x000000000001bc48        0x0 ahci.o
  .bss           0x000000000001bc48        0x0 storage.o
+ .bss           0x000000000001bc48        0x0 fs.o
  *(COMMON)
  COMMON         0x000000000001bc48       0x18 main.o
                 0x000000000001bc48                ATA_BAR1
@@ -338,6 +362,7 @@ LOAD pci.o
 LOAD ata.o
 LOAD ahci.o
 LOAD storage.o
+LOAD fs.o
 OUTPUT(stage2.bin elf32-i386)
 
 .comment        0x0000000000000000       0x2a
@@ -353,6 +378,7 @@ OUTPUT(stage2.bin elf32-i386)
  .comment       0x000000000000002a       0x2b ata.o
  .comment       0x000000000000002a       0x2b ahci.o
  .comment       0x000000000000002a       0x2b storage.o
+ .comment       0x000000000000002a       0x2b fs.o
 
 .note.GNU-stack
                 0x0000000000000000        0x0
@@ -378,3 +404,5 @@ OUTPUT(stage2.bin elf32-i386)
                 0x0000000000000000        0x0 ahci.o
  .note.GNU-stack
                 0x0000000000000000        0x0 storage.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 fs.o

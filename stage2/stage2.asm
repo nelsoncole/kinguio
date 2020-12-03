@@ -23,4 +23,4 @@ start:
 
 section .bss
 	resb 0x2000 ;8KiB
-_stack
+_stack:

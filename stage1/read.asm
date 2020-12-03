@@ -117,7 +117,7 @@ file_read:
 	mov eax,[si+106]
 	mov dword[first_blk],eax
 	
-; ler o primeiro bloco
+; ler o arquivo
 ; eax = LBA, ecx = count
 ._next_blk:	
 	mov eax,dword[first_blk]
