@@ -78,6 +78,7 @@ int fseek (FILE *fp, long num_bytes, int origin );
 long int ftell(FILE *fp);
 
 FILE *fopen (const char *path,const char *mode);
+int fclose(FILE *fp);
 int fgetc (FILE *fp);
 size_t fread (void *buffer,size_t size, size_t count, FILE *fp);
 

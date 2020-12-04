@@ -38,8 +38,6 @@ int printf(const char *fmt, ...)
 }
 
 //FILE
-
-
 /*
  *  Modo 	Significado
  *
@@ -69,6 +67,11 @@ FILE *fopen (const char *path,const char *mode)
 
 	return fp;
 	
+}
+
+int fclose(FILE *fp)
+{
+	return file_close(fp);
 }
 
 void rewind (FILE *fp)
