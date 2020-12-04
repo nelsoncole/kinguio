@@ -1,6 +1,7 @@
 #ifndef __STDIO_H
 #define __STDIO_H
 #include <stdarg.h>
+#include <size_t.h>
 
 
 #define NULL ((void *)0)
@@ -54,6 +55,8 @@ typedef struct _FILE {
 	short 		token;		// Usado para verificação de validade
 	//
 	unsigned char 	mode[4];
+	unsigned int	off;
+	unsigned int	off2;
 	//
 	char 		fname[256];	// File name
 	unsigned int 	fsize;		// File Size
@@ -68,6 +71,15 @@ typedef struct _FILE {
 
 
 }__attribute__ ((packed)) FILE;
+
+
+void rewind (FILE *fp);
+int fseek (FILE *fp, long num_bytes, int origin );
+long int ftell(FILE *fp);
+
+FILE *fopen (const char *path,const char *mode);
+int fgetc (FILE *fp);
+size_t fread (void *buffer,size_t size, size_t count, FILE *fp);
 
 
 #endif

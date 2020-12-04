@@ -23,9 +23,11 @@ void main()
 	printf("===============================================\n");
 	
 	
-	FILE *fp = open_file("README.md","r");
-	file_read_block(fp,0);
+	FILE *fp = fopen("README.md","r");
 	
-	printf("%s\n",fp->buffer);
+	int c;
+	for(c = fgetc (fp);c !=EOF;c = fgetc (fp)) {
 
+		putchar(c);
+	}
 }
