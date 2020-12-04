@@ -14,6 +14,11 @@ void *malloc(size_t size)
 
 }
 
+void free(void *buffer)
+{
+
+}
+
 #define HEX_LEN 8
 
 void i2hex(unsigned int val, char* dest, int len)

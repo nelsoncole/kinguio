@@ -54,6 +54,17 @@ typedef struct _FILE {
 	short 		token;		// Usado para verificação de validade
 	//
 	unsigned char 	mode[4];
+	//
+	char 		fname[256];	// File name
+	unsigned int 	fsize;		// File Size
+	unsigned int 	byte_per_sector;
+	unsigned int 	count;
+	unsigned int	fs_type;	// Tipo de sistema de arquivo
+	unsigned int 	num_of_blocks; 
+	unsigned int 	*blocks;	// 1024*1024 (absolute address sector)
+	
+	// 
+	unsigned int 	dv_num;
 
 
 }__attribute__ ((packed)) FILE;

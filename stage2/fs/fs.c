@@ -47,10 +47,12 @@ int read_directory_entry(directory_entry_t *d,super_block_t *f,part_t *p,int typ
 	unsigned int first_sector = (f->root_blk * f->sector_por_blk) + data_sector;
 	
 	// ler o primeiro bloco do directorio raiz 8KiB em geral.
-	char *root = (char*)malloc(1024*8);
-	memset(root,0,1024*8);
+	char *root = (char*)malloc(8192);
+	memset(root,0,8192);
+	
 	int r = read_sector(p->dv_num, f->sector_por_blk, first_sector,root);
 	
+	// Pesquizar em todos os blocos
 	int i;
 	for(i=0; i < 64; i++) {
 	
@@ -61,29 +63,87 @@ int read_directory_entry(directory_entry_t *d,super_block_t *f,part_t *p,int typ
 	
 	memcpy(d, root+(i*128), 128);
 	
-	//free(root);
+	free(root);
 
 	return 0;	
 }
 
 
-int read_block(void *buffer,unsigned int start,int count, int dv_num)
+FILE *open_file_r(directory_entry_t *d,super_block_t *f,part_t *p)
 {
-	return( read_sector(dv_num, count, start,buffer) );
+
+	FILE *fp = (FILE *)malloc(sizeof(FILE));
+	memset(fp,0,sizeof(FILE));
+	
+	fp->bsize 	= (unsigned) BUFSIZ;
+	fp->buffer 	= (unsigned char*)malloc(BUFSIZ);
+	fp->fsize	= d->file_size;
+	fp->byte_per_sector = f->byte_per_sector;
+	fp->count	= f->sector_por_blk;
+	
+	fp->dv_num	= p->dv_num;
+	
+	// 1024*1024
+	fp->blocks	= (unsigned int*)malloc(4096); // 4KiB
+	
+	unsigned int index = d->first_blk;
+	// obter blocos
+	unsigned int *BLK = (unsigned int*)malloc(8192); // 8KiB
+	unsigned int *blocks;
+	unsigned int start,flg_start = -1;
+	int i,t,r,eof = 0;
+	for(i=0;i<1024;i++) {
+	
+		fp->blocks[i] = (unsigned int)malloc(4096); // 4KiB
+		blocks = (unsigned int*) fp->blocks[i];
+		memset(blocks,0,4096);
+
+		for(t=0;t<1024;t++) {
+			blocks[t] = (index*f->sector_por_blk) + f->rsv + f->hidden;
+			fp->num_of_blocks++;
+			
+			// verifique eof
+			start = ((index * 4) / f->byte_per_sector) + f->rsv + f->hidden;
+			
+			if(flg_start != start) {
+			
+				r = read_sector(p->dv_num, 1, start,BLK);
+				if(r) {
+			
+					// error
+					free(BLK);
+					file_close(fp);
+					return NULL;
+				}
+				
+				flg_start = start;
+			}
+		
+			index = index % (f->byte_per_sector/4);
+			
+			index = BLK[index];
+			
+			if(index == EOF) {
+			
+				eof = -1;
+				break;
+			}	
+		}
+		
+		if(eof == EOF) break;
+	}
+	
+	free(BLK);
+	return (fp);
 }
 
+FILE *open_file(const char *filename, const char *mode)
+{
 
-
-void testfs() {
-
-	printf("Testando o fs\n");
-	const char filename[] = "README.md\0";
-	
-	
 	super_block_t *f = (super_block_t *)malloc(1024);
 	memset(f,0,1024);
 	
-	part_t *p = (part_t *)malloc(sizeof(part_t));
+	part_t p[1];
 	memset(p,0,sizeof(part_t));
 	
 	
@@ -91,18 +151,58 @@ void testfs() {
 	p->dv_num = 0;
 	
 	int r = read_super_block(f,p);
-	printf("read super bloco r = %d, sig = %s\n",r,f->sig);
+	
+	if(r) {
+	
+		free(f);
+		return 0;
+	}
+
 	
 	directory_entry_t d[128];
-	read_directory_entry(d,f,p,0,filename);
+	r = read_directory_entry(d,f,p,0,filename);
 	
-	char *buf = (char *)malloc(8192);
-	memset(buf,0,8192);
+	if(r) {
 	
-	unsigned int start =  (d->first_blk*f->sector_por_blk) + f->rsv + f->hidden ;
-	
-	r = read_block(buf, start, f->sector_por_blk, p->dv_num);
-	printf("r = %d\nFile name = %s\nFile size = %d\n%s\n",r,filename,d->file_size,buf);
+		free(f);
+		return 0;
+	}
 
+	
+	FILE *fp = open_file_r(d,f,p);
+	
+	free(f);
+	return fp;
 }
+
+int file_close(FILE *fp)
+{
+	int i;
+	free(fp->buffer);
+	
+	for(i=0;i < 1024;i++){
+
+		if(!fp->blocks[i]) break;
+		free((void*)fp->blocks[i]);
+	}
+	
+	free(fp->blocks);
+	free(fp);
+	
+	fp = NULL;
+	return 0;
+}
+
+
+int file_read_block(FILE *fp,int addr)
+{
+
+	if(addr >= fp->num_of_blocks || (!fp) ) return -1;
+
+	unsigned int *blocks = (unsigned int*) fp->blocks[addr/1024];
+	unsigned int start = blocks[addr%1024];
+
+	return( read_sector(fp->dv_num, fp->count, start,fp->buffer) );
+}
+
 

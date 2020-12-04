@@ -22,7 +22,10 @@ void main()
 	ata_initialize();
 	printf("===============================================\n");
 	
-	testfs();
 	
+	FILE *fp = open_file("README.md","r");
+	file_read_block(fp,0);
+	
+	printf("%s\n",fp->buffer);
 
 }

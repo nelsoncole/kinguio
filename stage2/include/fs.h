@@ -1,6 +1,8 @@
 #ifndef __FS_H
 #define __FS_H
 
+#include <stdio.h>
+
 typedef struct _part {
 	unsigned int dv_num;
 	unsigned int bytes_per_sector;
@@ -43,7 +45,9 @@ typedef struct _directory_entry {
 	char 		rsv[10];
 }__attribute__ ((packed)) directory_entry_t;
 
-void testfs();
+int file_read_block(FILE *fp,int addr);
+FILE *open_file(const char *filename, const char *mode);
+int file_close(FILE *fp);
 
 
 #endif
