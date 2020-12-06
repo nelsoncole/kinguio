@@ -2,9 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <gui.h>
+#include <gdt.h>
+#include <idt.h>
 #include <pci.h>
 #include <storage.h>
 #include <fs.h>
+#include <cpuid.h>
+#include <paging.h>
 
 void main()
 {
@@ -16,7 +20,19 @@ void main()
 	printf("Run: stage 2, 32-bit, start = 0x11000\n");
 	printf("===============================================\n");
 	
+	char cpu[64];
+	//cpuid_vendor(s);
+	cpuid_processor_brand(cpu);
+	printf("%s\n",cpu);
+	printf("===============================================\n");
+	
 	printf("Video mode: %dx%dx%d\n",gui->width,gui->height,gui->bpp);
+	printf("===============================================\n");
+	
+	printf("GDT and IDT install\n");
+	gdt_install();
+	idt_install();
+
 	printf("===============================================\n");
 	
 	pci_get_info(0,2);
@@ -24,24 +40,14 @@ void main()
 
 	ata_initialize();
 	printf("===============================================\n");
+	puts("How do I enable x86_64:\n");
+	puts("Disable paging\n");
+	puts("Set the PAE enable bit in CR4\n");
+	puts("Load CR3 with the physical address of the PML4\n");
+	puts("Enable long mode by setting the EFER.LME flag in MSR 0xC0000080\n");
+	puts("Enable paging\n");
 	
-	
-	
-	printf("Testing Libc functions:\n");
-	printf("fopen(const char *path,const char *mode)\n");
-	FILE *fp = fopen("README.md","r");
-	
-	printf("fgets(FILE *fp)\nRead text: ");
-	int c;
-	for(c = fgetc (fp);c !=EOF;c = fgetc (fp)) {
+	page_install();
 
-		putchar(c);
-	}
-	
-	printf("fclose(FILE *fp)\n");
-	fclose(fp);
-	
-	
-	
 	printf("===============================================\n");
 }
