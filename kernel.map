@@ -12,17 +12,17 @@ Script de ligação e mapa de memória
 .text           0x0000000000401000     0x1000 carregar endereço 0x0000000000001000
                 0x0000000000401000                code = .
  *(.text)
- .text          0x0000000000401000       0x4f kernel.o
+ .text          0x0000000000401000       0x4f setup.o
  *(.rodata)
                 0x0000000000402000                . = ALIGN (0x1000)
  *fill*         0x000000000040104f      0xfb1 
 
 .iplt           0x0000000000402000        0x0 carregar endereço 0x0000000000002000
- .iplt          0x0000000000402000        0x0 kernel.o
+ .iplt          0x0000000000402000        0x0 setup.o
 
 .rela.dyn       0x0000000000402000        0x0 carregar endereço 0x0000000000002000
- .rela.got      0x0000000000402000        0x0 kernel.o
- .rela.iplt     0x0000000000402000        0x0 kernel.o
+ .rela.got      0x0000000000402000        0x0 setup.o
+ .rela.iplt     0x0000000000402000        0x0 setup.o
 
 .data           0x0000000000402000        0x0 carregar endereço 0x0000000000002000
                 0x0000000000402000                data = .
@@ -30,20 +30,20 @@ Script de ligação e mapa de memória
                 0x0000000000402000                . = ALIGN (0x1000)
 
 .got            0x0000000000402000        0x0 carregar endereço 0x0000000000002000
- .got           0x0000000000402000        0x0 kernel.o
+ .got           0x0000000000402000        0x0 setup.o
 
 .got.plt        0x0000000000402000        0x0 carregar endereço 0x0000000000002000
- .got.plt       0x0000000000402000        0x0 kernel.o
+ .got.plt       0x0000000000402000        0x0 setup.o
 
 .igot.plt       0x0000000000402000        0x0 carregar endereço 0x0000000000002000
- .igot.plt      0x0000000000402000        0x0 kernel.o
+ .igot.plt      0x0000000000402000        0x0 setup.o
 
 .bss            0x0000000000402000     0x2000 carregar endereço 0x0000000000002000
                 0x0000000000402000                bss = .
  *(.bss)
- .bss           0x0000000000402000     0x2000 kernel.o
+ .bss           0x0000000000402000     0x2000 setup.o
  *(COMMON)
                 0x0000000000404000                . = ALIGN (0x1000)
                 0x0000000000404000                _end = .
-LOAD kernel.o
+LOAD setup.o
 OUTPUT(kernel.bin elf64-x86-64)

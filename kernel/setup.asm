@@ -5,12 +5,11 @@ _start:
 	jmp start
 	
 start:
-
 	mov rsp, _stack
 	mov rbp, 0;
 
 	mov rax,0xff000000ff0000
-	mov rdi,0x4000000 + 800*4 + 2400
+	mov rdi,0x3c00000 + 800*4 + 2400
 	
 	
 	mov rcx,200

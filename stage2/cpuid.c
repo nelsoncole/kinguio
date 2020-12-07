@@ -31,3 +31,22 @@ int cpuid_processor_brand(char *string)
 	return 0;
 }
 
+void cpuid(unsigned int code, unsigned int *a, unsigned int *d) 
+{
+  	__asm__ __volatile__("cpuid":"=a"(*a),"=d"(*d):"a"(code):"ecx","ebx");
+}
+
+int cpuid_string(unsigned int code, unsigned int where[4]) 
+{
+  	__asm__ __volatile__("cpuid":"=a"(*where),"=b"(*(where+1)),
+               "=c"(*(where+2)),"=d"(*(where+3)):"a"(code));
+               
+  	return (int)where[0];
+}
+
+
+
+
+
+
+

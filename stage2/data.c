@@ -8,6 +8,5 @@ void wait(int n)
 {
 
 	int count = n/100;
-
 	while(--count)__asm__ __volatile__("out %%al,$0x80"::);
 }

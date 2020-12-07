@@ -23,6 +23,9 @@ enum {
 int cpuid_vendor(char *string);
 int cpuid_processor_brand(char *string);
 
+void cpuid(unsigned int code, unsigned int*a, unsigned int *d);
+int cpuid_string(unsigned int code, unsigned int where[4]);
+
 
 #endif
 

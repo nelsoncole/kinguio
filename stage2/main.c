@@ -9,8 +9,9 @@
 #include <fs.h>
 #include <cpuid.h>
 #include <paging.h>
+#include <data.h>
 
-
+extern unsigned int *cof_parameter();
 void main()
 {
 
@@ -36,11 +37,10 @@ void main()
 
 	printf("===============================================\n");
 	
-	pci_get_info(0,2);
-	printf("===============================================\n");
-
 	ata_initialize();
 	printf("===============================================\n");
+	
+	printf("Read kernel.bin\n");
 	
 	FILE *f = fopen("kernel.bin","r");
 	if(!f) {
@@ -61,6 +61,18 @@ void main()
 	
 	
 	printf("===============================================\n");
+	
+	// Verificar suport x86_64
+	unsigned int a,d;
+	cpuid(0x80000001, &a,&d);
+	
+	// Test LM-bit
+	if(!(d >> 29 &1)) {
+			
+			puts("x86_64 hardware not supported\n");
+			for(;;);
+	
+	}
 	puts("How do I enable x86_64:\n");
 	puts("Disable paging\n");
 	puts("Set the PAE enable bit in CR4\n");
@@ -72,5 +84,6 @@ void main()
 
 	printf("===============================================\n");
 	
-	gdt_execute_long_mode(0x401000,0);
+	unsigned long pointer = (unsigned long) cof_parameter();
+	gdt_execute_long_mode(0x401000,pointer);
 }

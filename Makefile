@@ -7,9 +7,9 @@ AS=nasm
 CC=gcc
 LD=ld
 
-objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o vsprintf.o gdt.o idt.o vetor.o exception.o irq.o pci.o ata.o ahci.o storage.o fs.o cpuid.o msr.o paging.o
+objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o vsprintf.o gdt.o idt.o vetor.o exception.o irq.o pci.o ata.o ahci.o storage.o fs.o cpuid.o msr.o paging.o parameter.o
 
-objs2= kernel.o
+objs2= setup.o
 
 .PHONY: stage0.bin stage1.bin stage2.bin kernel.bin move clean test fs
 

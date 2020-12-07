@@ -5,12 +5,14 @@
 #include <msr.h>
 #include <io.h>
 
+#include <data.h>
 
 
-pml4_table_t *pml4e = (pml4_table_t *)0x100000;
-pae_page_directory_pointer_table_t *pdpte = (pae_page_directory_pointer_table_t*) 0x101000;
-pae_page_directory_t *pae_pde = (pae_page_directory_t*)0x102000;
-pae_page_table_t *pae_pte = (pae_page_table_t*)0x103000;
+
+pml4_table_t *pml4e = (pml4_table_t *)PAGING_ADDR;
+pae_page_directory_pointer_table_t *pdpte = (pae_page_directory_pointer_table_t*) (PAGING_ADDR + 0x1000);
+pae_page_directory_t *pae_pde = (pae_page_directory_t*) (PAGING_ADDR + 0x2000);
+pae_page_table_t *pae_pte = (pae_page_table_t*) (PAGING_ADDR + 0x3000);
 
 void load_pae_page_directory_pointer_table(pae_page_directory_pointer_table_t  *phy_addr)
 {
@@ -55,7 +57,7 @@ void page_install(void)
 	
 	//64 MiB
 	addr = 0;
-	for(i=0;i < 512*32; i++) {
+	for(i=0;i < 512*30; i++) {
 		
 		pte->p = 1;
 		pte->rw = 1;
@@ -72,6 +74,7 @@ void page_install(void)
 		
 		pte->p = 1;
 		pte->rw = 1;
+		pte->us = 1;
 		pte->frames = (addr >>12) &0xfffffffff;
 		pte++;
 		
@@ -81,11 +84,11 @@ void page_install(void)
 	
 	memset(pde,0,512*sizeof(pae_page_directory_t));
 	addr = (unsigned long)pae_pte;
-	for(i=0;i < 34; i++) {
+	for(i=0;i < 32; i++) {
 		
 		pde->p = 1;
 		pde->rw = 1;
-		pde->ps = 0;
+		if(i > 29) pde->us = 1;
 		pde->phy_addr_pt = (addr >>12) &0xfffffffff;
 		
 		addr +=0x1000;
@@ -119,8 +122,7 @@ void page_install(void)
 	
 	wait(400);
 	
-	gui->frame_buffer = (unsigned int*) 0x4000000;
-	
-	printf("\nStatus: 4-level paging, PAE = 1, MSR.EFER.LME = 1, MSR.EFER.LMA = 1\n");
+	// Update gui->frame_buffer
+	gui->frame_buffer = (unsigned int*) (0x3c00000);
 	
 }
