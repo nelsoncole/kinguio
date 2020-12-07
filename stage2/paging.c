@@ -3,20 +3,21 @@
 #include <gui.h>
 #include <stdio.h>
 #include <msr.h>
+#include <io.h>
 
 
 
-pml4_table_t *pml4e = (pml4_table_t *)0x20000;
-pae_page_directory_pointer_table_t *pdpte = (pae_page_directory_pointer_table_t*) 0x21000;
-pae_page_directory_t *pae_pde = (pae_page_directory_t*)0x22000;
-pae_page_table_t *pae_pte = (pae_page_table_t*)0x23000;
+pml4_table_t *pml4e = (pml4_table_t *)0x100000;
+pae_page_directory_pointer_table_t *pdpte = (pae_page_directory_pointer_table_t*) 0x101000;
+pae_page_directory_t *pae_pde = (pae_page_directory_t*)0x102000;
+pae_page_table_t *pae_pte = (pae_page_table_t*)0x103000;
 
 void load_pae_page_directory_pointer_table(pae_page_directory_pointer_table_t  *phy_addr)
 {
 
 	__asm__ __volatile__("movl %k0,%%cr3"::"r"(phy_addr));
 	
-	//wait_ns(120); // Wait Translation Lookaside Buffer (TLB)
+	wait(120); // Wait Translation Lookaside Buffer (TLB)
 }
 
 void load_pml4_table(pml4_table_t *phy_addr)
@@ -27,8 +28,9 @@ void load_pml4_table(pml4_table_t *phy_addr)
 void enable_pae()
 {
 
+	// PAE and PGE
 	__asm__ __volatile__("movl %%cr4,%%eax;"
-			     "orl $0x20,%%eax;"
+			     "orl $0xa0,%%eax;"
 			     "movl %%eax,%%cr4"::);
 
 
@@ -112,9 +114,10 @@ void page_install(void)
 	
 	enable_pae();
 	load_pml4_table(pml4e);
-	
 	setmsr(0xC0000080 , 0x100, 0);
 	page_enable();
+	
+	wait(400);
 	
 	gui->frame_buffer = (unsigned int*) 0x4000000;
 	

@@ -96,8 +96,6 @@ char *exception_mensagem[32]={
 void fault_exception(int  n)
 {
 
-	__asm__ __volatile__("movl %k0,%%cr3"::"r"(0));
-
 	unsigned int cr2,cr3,cr4;
 	puts(exception_mensagem[n]);
 	

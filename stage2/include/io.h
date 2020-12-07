@@ -57,4 +57,7 @@
 #define nop() __asm__ __volatile__ ("nop")
 
 
+void wait(int n);
+
+
 #endif

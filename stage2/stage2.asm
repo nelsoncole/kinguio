@@ -50,6 +50,33 @@ idt_flush:
 	pop ebp
     	ret
 
+global long_mode
+long_mode:    
+	push ebp
+	mov ebp, esp
+    	mov eax, [esp + 0x08]
+    	mov edx, [esp + 0x0c]
+    	mov ebx, [esp + 0x10]
+    	lgdt [eax]
+    	jmp 0x08:.flush
+.flush:
+    	mov ax, 0x10
+    	mov ds, ax
+    	mov es, ax
+    	mov fs, ax
+    	mov gs, ax
+	mov ss, ax
+
+    	mov esp, ebp
+	pop ebp
+	
+	push ebx
+	jmp edx
+	
+	ret
+
+	
+
 section .bss
 	resb 0x2000 ;8KiB
 _stack:

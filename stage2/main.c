@@ -10,6 +10,7 @@
 #include <cpuid.h>
 #include <paging.h>
 
+
 void main()
 {
 
@@ -40,6 +41,26 @@ void main()
 
 	ata_initialize();
 	printf("===============================================\n");
+	
+	FILE *f = fopen("kernel.bin","r");
+	if(!f) {
+	
+		printf("error read kernel.bin %x\n",f);
+		
+		for(;;);
+	}
+	
+	fseek(f,0,SEEK_END);
+	int size = ftell(f);
+	rewind(f);
+	
+	fread ((void*)0x400000, 1, size, f);
+	
+	fclose(f);
+	
+	
+	
+	printf("===============================================\n");
 	puts("How do I enable x86_64:\n");
 	puts("Disable paging\n");
 	puts("Set the PAE enable bit in CR4\n");
@@ -50,4 +71,6 @@ void main()
 	page_install();
 
 	printf("===============================================\n");
+	
+	gdt_execute_long_mode(0x401000,0);
 }

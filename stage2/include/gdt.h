@@ -26,6 +26,7 @@ typedef struct _gdtr{
 
 
 void gdt_install(void);
+void gdt_execute_long_mode(unsigned long addr,unsigned long pointer);
 
 
 #endif

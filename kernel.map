@@ -1,0 +1,49 @@
+
+Configuração de Memória
+
+Nome :           Origem             Comprimento        Atributos
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Script de ligação e mapa de memória
+
+                0x0000000000401000                . = 0x401000
+                0x0000000000401000                _start = .
+
+.text           0x0000000000401000     0x1000 carregar endereço 0x0000000000001000
+                0x0000000000401000                code = .
+ *(.text)
+ .text          0x0000000000401000       0x4f kernel.o
+ *(.rodata)
+                0x0000000000402000                . = ALIGN (0x1000)
+ *fill*         0x000000000040104f      0xfb1 
+
+.iplt           0x0000000000402000        0x0 carregar endereço 0x0000000000002000
+ .iplt          0x0000000000402000        0x0 kernel.o
+
+.rela.dyn       0x0000000000402000        0x0 carregar endereço 0x0000000000002000
+ .rela.got      0x0000000000402000        0x0 kernel.o
+ .rela.iplt     0x0000000000402000        0x0 kernel.o
+
+.data           0x0000000000402000        0x0 carregar endereço 0x0000000000002000
+                0x0000000000402000                data = .
+ *(.data)
+                0x0000000000402000                . = ALIGN (0x1000)
+
+.got            0x0000000000402000        0x0 carregar endereço 0x0000000000002000
+ .got           0x0000000000402000        0x0 kernel.o
+
+.got.plt        0x0000000000402000        0x0 carregar endereço 0x0000000000002000
+ .got.plt       0x0000000000402000        0x0 kernel.o
+
+.igot.plt       0x0000000000402000        0x0 carregar endereço 0x0000000000002000
+ .igot.plt      0x0000000000402000        0x0 kernel.o
+
+.bss            0x0000000000402000     0x2000 carregar endereço 0x0000000000002000
+                0x0000000000402000                bss = .
+ *(.bss)
+ .bss           0x0000000000402000     0x2000 kernel.o
+ *(COMMON)
+                0x0000000000404000                . = ALIGN (0x1000)
+                0x0000000000404000                _end = .
+LOAD kernel.o
+OUTPUT(kernel.bin elf64-x86-64)

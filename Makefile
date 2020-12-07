@@ -1,13 +1,17 @@
 ASFLAGS  :=-f elf32 -O0
+ASFLAGS2  :=-f elf64 -O0
 CFLAGS32 :=-Wall -O0 -m32 -ffreestanding -nostdlib -nostdinc -I ./stage2/include
 LDFLAGS  :=-m elf_i386 -Map stage2.map -T stage2/link.ld
+LDFLAGS2  :=-m elf_x86_64 -Map kernel.map -T kernel/link.ld
 AS=nasm
 CC=gcc
 LD=ld
 
 objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o vsprintf.o gdt.o idt.o vetor.o exception.o irq.o pci.o ata.o ahci.o storage.o fs.o cpuid.o msr.o paging.o
 
-.PHONY: stage0.bin stage1.bin stage2.bin move clean test fs
+objs2= kernel.o
+
+.PHONY: stage0.bin stage1.bin stage2.bin kernel.bin move clean test fs
 
 stage0.bin: stage0/stage0.asm
 	nasm -f bin -o $@ $<
@@ -36,6 +40,11 @@ stage2.bin: $(objs)
 %.o: stage2/fs/%.c
 	$(CC) $(CFLAGS32) -c -o $@ $<
 	
+kernel.bin: $(objs2)
+	$(LD) $(LDFLAGS2) -o $@ $^
+#kernel
+%.o: kernel/%.asm
+	$(AS) $(ASFLAGS2) $< -o $@
 	
 move:
 	mv *.bin bin
@@ -50,6 +59,7 @@ test:
 	./fs -f disk.vhd
 	./fs -g bin/stage1.bin disk.vhd
 	./fs -g bin/stage2.bin disk.vhd
+	./fs -g bin/kernel.bin disk.vhd
 	./fs -g README.md disk.vhd
 	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw,bus=0
 	
