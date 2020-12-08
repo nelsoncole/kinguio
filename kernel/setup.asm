@@ -7,12 +7,12 @@ _start:
 start:
 	mov rsp, _stack
 	mov rbp, 0;
-
-
-	mov rbx,0x100000
-	push rbx
+	
+	xor rdi,rdi
+	mov edi,ebx
 	call main
-	pop rbx
+	
+	
 
 	hlt
 	

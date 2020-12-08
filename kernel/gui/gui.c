@@ -4,14 +4,12 @@
 #include <stdio.h>
 
 struct _gui gui[1];
-gui_t *g;
 
-extern void puts(const char *s);
-void initialize_gui(unsigned int *pointer)
+void initialize_gui(unsigned int pointer)
 {
 
 	// GUI	
-	g = (gui_t*) (0x100000 + 0x40);
+	gui_t *g = (gui_t*) (pointer + 0x40);
 	memcpy(gui,g,sizeof(gui_t));
 	
 	gui->bank_buffer	= 0; // 8MB
@@ -67,6 +65,8 @@ void refresh_rate()
 void clears_creen() 
 {
 	memset((unsigned*)gui->virtual_buffer/*G->BankBuffer*/,0,gui->width * (gui->height) * (gui->bpp/8));
+	
+	gui->cursor_x = gui->cursor_y = 0;
 	
 }
 

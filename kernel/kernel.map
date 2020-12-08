@@ -12,7 +12,6 @@ Removida propriedade 0xc0000002 para unir main.o (não encontrado) e stdlib.o (0
 Distribuindo símbolos comuns
 Símbolos comuns do tamanho do ficheiro
 
-g                   0x8               gui.o
 gui                 0x68              gui.o
 
 Descartar secções de entrada
@@ -45,67 +44,68 @@ Script de ligação e mapa de memória
 .text           0x0000000000401000     0x2000 carregar endereço 0x0000000000001000
                 0x0000000000401000                code = .
  *(.text)
- .text          0x0000000000401000       0x2b setup.o
- .text          0x000000000040102b       0x73 main.o
-                0x000000000040102b                main
- .text          0x000000000040109e      0x185 string.o
-                0x000000000040109e                memset
-                0x00000000004010e5                memcpy
-                0x000000000040115c                strcpy
-                0x00000000004011d7                strlen
- .text          0x0000000000401223      0x69b gui.o
-                0x0000000000401223                initialize_gui
-                0x00000000004013c1                put_pixel
-                0x0000000000401435                put_pixel_buff
-                0x00000000004014d0                refresh_rate
-                0x0000000000401577                clears_creen
-                0x0000000000401603                draw_char_transparent
-                0x00000000004016fa                glyph
- .text          0x00000000004018be        0x0 font8x16.o
- .text          0x00000000004018be      0x4e0 vsprintf.o
-                0x000000000040192a                vsprintf
- .text          0x0000000000401d9e      0x569 stdio.o
-                0x0000000000401d9e                putchar
-                0x0000000000401de6                puts
-                0x0000000000401e76                printf
-                0x0000000000401f5a                fopen
-                0x0000000000401fa6                fclose
-                0x0000000000401fd5                rewind
-                0x000000000040203e                fseek
-                0x000000000040211c                ftell
-                0x000000000040215d                fgetc
-                0x000000000040224a                fread
- .text          0x0000000000402307      0x334 stdlib.o
-                0x0000000000402307                initialize_heap
-                0x0000000000402331                malloc
-                0x000000000040235f                free
-                0x000000000040238a                i2hex
-                0x00000000004024f4                itoa
+ .text          0x0000000000401000       0x24 setup.o
+ .text          0x0000000000401024       0x70 main.o
+                0x0000000000401024                main
+ .text          0x0000000000401094      0x185 string.o
+                0x0000000000401094                memset
+                0x00000000004010db                memcpy
+                0x0000000000401152                strcpy
+                0x00000000004011cd                strlen
+ .text          0x0000000000401219      0x6b7 gui.o
+                0x0000000000401219                initialize_gui
+                0x00000000004013a6                put_pixel
+                0x000000000040141a                put_pixel_buff
+                0x00000000004014b5                refresh_rate
+                0x000000000040155c                clears_creen
+                0x0000000000401615                draw_char_transparent
+                0x000000000040170c                glyph
+ .text          0x00000000004018d0        0x0 font8x16.o
+ .text          0x00000000004018d0      0x4e0 vsprintf.o
+                0x000000000040193c                vsprintf
+ .text          0x0000000000401db0      0x569 stdio.o
+                0x0000000000401db0                putchar
+                0x0000000000401df8                puts
+                0x0000000000401e88                printf
+                0x0000000000401f6c                fopen
+                0x0000000000401fb8                fclose
+                0x0000000000401fe7                rewind
+                0x0000000000402050                fseek
+                0x000000000040212e                ftell
+                0x000000000040216f                fgetc
+                0x000000000040225c                fread
+ .text          0x0000000000402319      0x334 stdlib.o
+                0x0000000000402319                initialize_heap
+                0x0000000000402343                malloc
+                0x0000000000402371                free
+                0x000000000040239c                i2hex
+                0x0000000000402506                itoa
  *(.rodata)
- .rodata        0x000000000040263b        0xd main.o
- .rodata        0x0000000000402648      0x110 vsprintf.o
+ .rodata        0x000000000040264d       0x17 main.o
+ *fill*         0x0000000000402664        0x4 
+ .rodata        0x0000000000402668      0x110 vsprintf.o
                 0x0000000000403000                . = ALIGN (0x1000)
- *fill*         0x0000000000402758      0x8a8 
+ *fill*         0x0000000000402778      0x888 
 
-.eh_frame       0x0000000000403000      0x414 carregar endereço 0x0000000000003000
+.eh_frame       0x0000000000403000      0x41c carregar endereço 0x0000000000003000
  .eh_frame      0x0000000000403000       0x40 main.o
  .eh_frame      0x0000000000403040       0x80 string.o
                                          0x98 (tamanho antes do relaxamento)
- .eh_frame      0x00000000004030c0      0x100 gui.o
-                                        0x118 (tamanho antes do relaxamento)
- .eh_frame      0x00000000004031c0       0x50 vsprintf.o
+ .eh_frame      0x00000000004030c0      0x108 gui.o
+                                        0x120 (tamanho antes do relaxamento)
+ .eh_frame      0x00000000004031c8       0x50 vsprintf.o
                                          0x68 (tamanho antes do relaxamento)
- .eh_frame      0x0000000000403210      0x158 stdio.o
+ .eh_frame      0x0000000000403218      0x158 stdio.o
                                         0x170 (tamanho antes do relaxamento)
- .eh_frame      0x0000000000403368       0xac stdlib.o
+ .eh_frame      0x0000000000403370       0xac stdlib.o
                                          0xc8 (tamanho antes do relaxamento)
 
-.iplt           0x0000000000403414        0x0 carregar endereço 0x0000000000003414
- .iplt          0x0000000000403414        0x0 setup.o
+.iplt           0x000000000040341c        0x0 carregar endereço 0x000000000000341c
+ .iplt          0x000000000040341c        0x0 setup.o
 
-.rela.dyn       0x0000000000403418        0x0 carregar endereço 0x0000000000003418
- .rela.got      0x0000000000403418        0x0 setup.o
- .rela.iplt     0x0000000000403418        0x0 setup.o
+.rela.dyn       0x0000000000403420        0x0 carregar endereço 0x0000000000003420
+ .rela.got      0x0000000000403420        0x0 setup.o
+ .rela.iplt     0x0000000000403420        0x0 setup.o
 
 .data           0x0000000000403420     0x1be0 carregar endereço 0x0000000000003420
                 0x0000000000403420                data = .
@@ -143,11 +143,10 @@ Script de ligação e mapa de memória
  .bss           0x0000000000407020        0x0 stdio.o
  .bss           0x0000000000407020        0x0 stdlib.o
  *(COMMON)
- COMMON         0x0000000000407020       0x88 gui.o
-                0x0000000000407020                g
-                0x0000000000407040                gui
+ COMMON         0x0000000000407020       0x68 gui.o
+                0x0000000000407020                gui
                 0x0000000000408000                . = ALIGN (0x1000)
- *fill*         0x00000000004070a8      0xf58 
+ *fill*         0x0000000000407088      0xf78 
                 0x0000000000408000                _end = .
 LOAD setup.o
 LOAD main.o

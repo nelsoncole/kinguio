@@ -1,4 +1,4 @@
-.PHONY: stage0.bin stage1.bin kernel.bin move clean test fs
+.PHONY: stage0.bin stage1.bin kernel.bin move clean test fs vbox_install
 
 stage0.bin: stage0/stage0.asm
 	nasm -f bin -o $@ $<
@@ -8,7 +8,7 @@ stage1.bin: stage1/stage1.asm
 move:
 	mv *.bin bin
 clean:
-	#rm bin/*.bin
+	rm bin/*.bin
 	rm fs
 	rm disk.vhd
 
@@ -23,6 +23,14 @@ test:
 	
 fs:
 	gcc -Wall -C fs.c -o fs
+	
+	
+vbox_install:
+	./fs -f "/home/nelson/VirtualBox VMs/Kinguio/"*.vhd
+	./fs -g bin/stage1.bin "/home/nelson/VirtualBox VMs/Kinguio/"*.vhd
+	./fs -g bin/stage2.bin "/home/nelson/VirtualBox VMs/Kinguio/"*.vhd
+	./fs -g bin/kernel.bin "/home/nelson/VirtualBox VMs/Kinguio/"*.vhd
+	./fs -g README.md "/home/nelson/VirtualBox VMs/Kinguio/"*.vhd
 	
 #git add ./
 #git commit -m "commit++"	
