@@ -1,4 +1,13 @@
 
+A unir propriedades do programa
+
+Removida propriedade 0xc0000002 para unir kernel/main.o (0x3) e setup.o (não encontrado)
+
+Descartar secções de entrada
+
+ .note.gnu.property
+                0x0000000000000000       0x20 kernel/main.o
+
 Configuração de Memória
 
 Nome :           Origem             Comprimento        Atributos
@@ -13,6 +22,7 @@ Script de ligação e mapa de memória
                 0x0000000000401000                code = .
  *(.text)
  .text          0x0000000000401000       0x4f setup.o
+ .text          0x000000000040104f        0x0 kernel/main.o
  *(.rodata)
                 0x0000000000402000                . = ALIGN (0x1000)
  *fill*         0x000000000040104f      0xfb1 
@@ -27,6 +37,7 @@ Script de ligação e mapa de memória
 .data           0x0000000000402000        0x0 carregar endereço 0x0000000000002000
                 0x0000000000402000                data = .
  *(.data)
+ .data          0x0000000000402000        0x0 kernel/main.o
                 0x0000000000402000                . = ALIGN (0x1000)
 
 .got            0x0000000000402000        0x0 carregar endereço 0x0000000000002000
@@ -42,8 +53,19 @@ Script de ligação e mapa de memória
                 0x0000000000402000                bss = .
  *(.bss)
  .bss           0x0000000000402000     0x2000 setup.o
+ .bss           0x0000000000404000        0x0 kernel/main.o
  *(COMMON)
                 0x0000000000404000                . = ALIGN (0x1000)
                 0x0000000000404000                _end = .
 LOAD setup.o
+LOAD kernel/main.o
 OUTPUT(kernel.bin elf64-x86-64)
+
+.comment        0x0000000000000000       0x2a
+ .comment       0x0000000000000000       0x2a kernel/main.o
+                                         0x2b (tamanho antes do relaxamento)
+
+.note.GNU-stack
+                0x0000000000000000        0x0
+ .note.GNU-stack
+                0x0000000000000000        0x0 kernel/main.o

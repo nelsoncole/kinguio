@@ -57,8 +57,8 @@ void gdt_execute_long_mode(unsigned long addr,unsigned long pointer)
 	memset(gdt,0,sizeof(gdt_t)*5);
 	//     (n,limit ,base ,type,s,dpl,p,avl,l,db,g)
 	set_gdt(gdt,0,0,0,0,0,0,0,0,0,0,0);
-	set_gdt(gdt,1,0,0x00000000,0xA,1,0,1,0,1,0,1); //dpl 0
-	set_gdt(gdt,2,0,0x00000000,0x2,1,0,1,0,0,0,1); //dpl 0
+	set_gdt(gdt,1,0,0x00000000,0xA,1,0,1,0,1,0,0); //dpl 0
+	set_gdt(gdt,2,0,0x00000000,0x2,1,0,1,0,1,0,0); //dpl 0
 
 
     	gdtr->limit 	= (sizeof(gdt_t)*5)-1;

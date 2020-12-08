@@ -1,56 +1,14 @@
-ASFLAGS  :=-f elf32 -O0
-ASFLAGS2  :=-f elf64 -O0
-CFLAGS32 :=-Wall -O0 -m32 -ffreestanding -nostdlib -nostdinc -I ./stage2/include
-LDFLAGS  :=-m elf_i386 -Map stage2.map -T stage2/link.ld
-LDFLAGS2  :=-m elf_x86_64 -Map kernel.map -T kernel/link.ld
-AS=nasm
-CC=gcc
-LD=ld
-
-objs= stage2.o main.o data.o stdlib.o string.o gui.o font8x16.o stdio.o vsprintf.o gdt.o idt.o vetor.o exception.o irq.o pci.o ata.o ahci.o storage.o fs.o cpuid.o msr.o paging.o parameter.o
-
-objs2= setup.o
-
-.PHONY: stage0.bin stage1.bin stage2.bin kernel.bin move clean test fs
+.PHONY: stage0.bin stage1.bin kernel.bin move clean test fs
 
 stage0.bin: stage0/stage0.asm
 	nasm -f bin -o $@ $<
 	
 stage1.bin: stage1/stage1.asm
 	nasm -i stage1 -f bin -o $@ $<
-	
-stage2.bin: $(objs)
-	$(LD) $(LDFLAGS) -o $@ $^
-#stage2
-%.o: stage2/%.asm
-	$(AS) $(ASFLAGS) $< -o $@
-	
-%.o: stage2/%.c
-	$(CC) $(CFLAGS32) -c -o $@ $<
-
-%.o: stage2/lib/%.c
-	$(CC) $(CFLAGS32) -c -o $@ $<
-	
-%.o: stage2/gui/%.c
-	$(CC) $(CFLAGS32) -c -o $@ $<
-	
-%.o: stage2/drive/%.c
-	$(CC) $(CFLAGS32) -c -o $@ $<
-
-%.o: stage2/fs/%.c
-	$(CC) $(CFLAGS32) -c -o $@ $<
-	
-kernel.bin: $(objs2)
-	$(LD) $(LDFLAGS2) -o $@ $^
-#kernel
-%.o: kernel/%.asm
-	$(AS) $(ASFLAGS2) $< -o $@
-	
 move:
 	mv *.bin bin
 clean:
-	rm *.o
-	rm bin/*.bin
+	#rm bin/*.bin
 	rm fs
 	rm disk.vhd
 

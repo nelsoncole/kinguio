@@ -31,7 +31,8 @@ unsigned int *cof_parameter()
 
 	// 48
 	// Copia parametro GUI
-	memcpy(mem + 0x30,gui,sizeof(gui_t));
+	memcpy((void*)((char*)mem + 0x40),gui,sizeof(gui_t));
+	
 
 
 	// Physical Memoey Map (INT 0x15 AX,E820h)

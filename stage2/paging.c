@@ -57,7 +57,7 @@ void page_install(void)
 	
 	//64 MiB
 	addr = 0;
-	for(i=0;i < 512*30; i++) {
+	for(i=0;i < 512*32; i++) {
 		
 		pte->p = 1;
 		pte->rw = 1;
@@ -69,7 +69,6 @@ void page_install(void)
 	
 	
 	addr = (unsigned long)gui->frame_buffer;
-	
 	for(i=0;i < 512 * 2; i++) {
 		
 		pte->p = 1;
@@ -84,11 +83,11 @@ void page_install(void)
 	
 	memset(pde,0,512*sizeof(pae_page_directory_t));
 	addr = (unsigned long)pae_pte;
-	for(i=0;i < 32; i++) {
+	for(i=0;i < 34; i++) {
 		
 		pde->p = 1;
 		pde->rw = 1;
-		if(i > 29) pde->us = 1;
+		if(i > 31) pde->us = 1;
 		pde->phy_addr_pt = (addr >>12) &0xfffffffff;
 		
 		addr +=0x1000;
@@ -122,7 +121,7 @@ void page_install(void)
 	
 	wait(400);
 	
-	// Update gui->frame_buffer
-	gui->frame_buffer = (unsigned int*) (0x3c00000);
+	// Update gui->virtual_buffer
+	gui->virtual_buffer = 0x4000000;
 	
 }

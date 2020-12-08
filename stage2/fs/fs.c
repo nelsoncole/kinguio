@@ -2,6 +2,7 @@
 #include <storage.h>
 #include <stdlib.h>
 #include <string.h>
+#include <data.h>
 
 int filename_cmp(const char *s1, const char *s2)
 {
@@ -147,8 +148,9 @@ FILE *open_file(const char *filename, const char *mode)
 	memset(p,0,sizeof(part_t));
 	
 	
+	// initialize partition
 	p->start = 1;
-	p->dv_num = 0;
+	p->dv_num = dv_num;
 	
 	int r = read_super_block(f,p);
 	

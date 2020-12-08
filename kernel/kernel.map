@@ -1,0 +1,187 @@
+
+A unir propriedades do programa
+
+Removida propriedade 0xc0000002 para unir main.o (0x3) e setup.o (não encontrado)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e string.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e gui.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e font8x16.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e vsprintf.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e stdio.o (0x3)
+Removida propriedade 0xc0000002 para unir main.o (não encontrado) e stdlib.o (0x3)
+
+Distribuindo símbolos comuns
+Símbolos comuns do tamanho do ficheiro
+
+g                   0x8               gui.o
+gui                 0x68              gui.o
+
+Descartar secções de entrada
+
+ .note.gnu.property
+                0x0000000000000000       0x20 main.o
+ .note.gnu.property
+                0x0000000000000000       0x20 string.o
+ .note.gnu.property
+                0x0000000000000000       0x20 gui.o
+ .note.gnu.property
+                0x0000000000000000       0x20 font8x16.o
+ .note.gnu.property
+                0x0000000000000000       0x20 vsprintf.o
+ .note.gnu.property
+                0x0000000000000000       0x20 stdio.o
+ .note.gnu.property
+                0x0000000000000000       0x20 stdlib.o
+
+Configuração de Memória
+
+Nome :           Origem             Comprimento        Atributos
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Script de ligação e mapa de memória
+
+                0x0000000000401000                . = 0x401000
+                0x0000000000401000                _start = .
+
+.text           0x0000000000401000     0x2000 carregar endereço 0x0000000000001000
+                0x0000000000401000                code = .
+ *(.text)
+ .text          0x0000000000401000       0x2b setup.o
+ .text          0x000000000040102b       0x73 main.o
+                0x000000000040102b                main
+ .text          0x000000000040109e      0x185 string.o
+                0x000000000040109e                memset
+                0x00000000004010e5                memcpy
+                0x000000000040115c                strcpy
+                0x00000000004011d7                strlen
+ .text          0x0000000000401223      0x69b gui.o
+                0x0000000000401223                initialize_gui
+                0x00000000004013c1                put_pixel
+                0x0000000000401435                put_pixel_buff
+                0x00000000004014d0                refresh_rate
+                0x0000000000401577                clears_creen
+                0x0000000000401603                draw_char_transparent
+                0x00000000004016fa                glyph
+ .text          0x00000000004018be        0x0 font8x16.o
+ .text          0x00000000004018be      0x4e0 vsprintf.o
+                0x000000000040192a                vsprintf
+ .text          0x0000000000401d9e      0x569 stdio.o
+                0x0000000000401d9e                putchar
+                0x0000000000401de6                puts
+                0x0000000000401e76                printf
+                0x0000000000401f5a                fopen
+                0x0000000000401fa6                fclose
+                0x0000000000401fd5                rewind
+                0x000000000040203e                fseek
+                0x000000000040211c                ftell
+                0x000000000040215d                fgetc
+                0x000000000040224a                fread
+ .text          0x0000000000402307      0x334 stdlib.o
+                0x0000000000402307                initialize_heap
+                0x0000000000402331                malloc
+                0x000000000040235f                free
+                0x000000000040238a                i2hex
+                0x00000000004024f4                itoa
+ *(.rodata)
+ .rodata        0x000000000040263b        0xd main.o
+ .rodata        0x0000000000402648      0x110 vsprintf.o
+                0x0000000000403000                . = ALIGN (0x1000)
+ *fill*         0x0000000000402758      0x8a8 
+
+.eh_frame       0x0000000000403000      0x414 carregar endereço 0x0000000000003000
+ .eh_frame      0x0000000000403000       0x40 main.o
+ .eh_frame      0x0000000000403040       0x80 string.o
+                                         0x98 (tamanho antes do relaxamento)
+ .eh_frame      0x00000000004030c0      0x100 gui.o
+                                        0x118 (tamanho antes do relaxamento)
+ .eh_frame      0x00000000004031c0       0x50 vsprintf.o
+                                         0x68 (tamanho antes do relaxamento)
+ .eh_frame      0x0000000000403210      0x158 stdio.o
+                                        0x170 (tamanho antes do relaxamento)
+ .eh_frame      0x0000000000403368       0xac stdlib.o
+                                         0xc8 (tamanho antes do relaxamento)
+
+.iplt           0x0000000000403414        0x0 carregar endereço 0x0000000000003414
+ .iplt          0x0000000000403414        0x0 setup.o
+
+.rela.dyn       0x0000000000403418        0x0 carregar endereço 0x0000000000003418
+ .rela.got      0x0000000000403418        0x0 setup.o
+ .rela.iplt     0x0000000000403418        0x0 setup.o
+
+.data           0x0000000000403420     0x1be0 carregar endereço 0x0000000000003420
+                0x0000000000403420                data = .
+ *(.data)
+ .data          0x0000000000403420        0x0 main.o
+ .data          0x0000000000403420        0x0 string.o
+ .data          0x0000000000403420        0x0 gui.o
+ .data          0x0000000000403420     0x1000 font8x16.o
+                0x0000000000403420                font8x16
+ .data          0x0000000000404420        0x0 vsprintf.o
+ .data          0x0000000000404420        0x0 stdio.o
+ .data          0x0000000000404420        0x0 stdlib.o
+                0x0000000000405000                . = ALIGN (0x1000)
+ *fill*         0x0000000000404420      0xbe0 
+
+.got            0x0000000000405000        0x8 carregar endereço 0x0000000000005000
+ .got           0x0000000000405000        0x8 setup.o
+
+.got.plt        0x0000000000405008       0x18 carregar endereço 0x0000000000005008
+ .got.plt       0x0000000000405008       0x18 setup.o
+                0x0000000000405008                _GLOBAL_OFFSET_TABLE_
+
+.igot.plt       0x0000000000405020        0x0 carregar endereço 0x0000000000005020
+ .igot.plt      0x0000000000405020        0x0 setup.o
+
+.bss            0x0000000000405020     0x2fe0 carregar endereço 0x0000000000005020
+                0x0000000000405020                bss = .
+ *(.bss)
+ .bss           0x0000000000405020     0x2000 setup.o
+ .bss           0x0000000000407020        0x0 main.o
+ .bss           0x0000000000407020        0x0 string.o
+ .bss           0x0000000000407020        0x0 gui.o
+ .bss           0x0000000000407020        0x0 font8x16.o
+ .bss           0x0000000000407020        0x0 vsprintf.o
+ .bss           0x0000000000407020        0x0 stdio.o
+ .bss           0x0000000000407020        0x0 stdlib.o
+ *(COMMON)
+ COMMON         0x0000000000407020       0x88 gui.o
+                0x0000000000407020                g
+                0x0000000000407040                gui
+                0x0000000000408000                . = ALIGN (0x1000)
+ *fill*         0x00000000004070a8      0xf58 
+                0x0000000000408000                _end = .
+LOAD setup.o
+LOAD main.o
+LOAD string.o
+LOAD gui.o
+LOAD font8x16.o
+LOAD vsprintf.o
+LOAD stdio.o
+LOAD stdlib.o
+OUTPUT(kernel.bin elf64-x86-64)
+
+.comment        0x0000000000000000       0x2a
+ .comment       0x0000000000000000       0x2a main.o
+                                         0x2b (tamanho antes do relaxamento)
+ .comment       0x000000000000002a       0x2b string.o
+ .comment       0x000000000000002a       0x2b gui.o
+ .comment       0x000000000000002a       0x2b font8x16.o
+ .comment       0x000000000000002a       0x2b vsprintf.o
+ .comment       0x000000000000002a       0x2b stdio.o
+ .comment       0x000000000000002a       0x2b stdlib.o
+
+.note.GNU-stack
+                0x0000000000000000        0x0
+ .note.GNU-stack
+                0x0000000000000000        0x0 main.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 string.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 gui.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 font8x16.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 vsprintf.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 stdio.o
+ .note.GNU-stack
+                0x0000000000000000        0x0 stdlib.o

@@ -1,7 +1,6 @@
 #ifndef __GUI_H
 #define __GUI_H
 
-
 extern short font8x16[128*16];
 typedef struct _font {
 	int x;
@@ -28,6 +27,7 @@ typedef struct _gui
 	unsigned int	window_screen;
 	unsigned int	window_background; 
 	
+	
 	//
 	unsigned int 	virtual_buffer;
 	
@@ -46,11 +46,12 @@ typedef struct _gui
 	
 }__attribute__ ((packed)) gui_t;
 
-extern struct _gui *gui;
+extern struct _gui gui[1];
 
 
 
-void initialize_gui();
+
+void initialize_gui(unsigned int *pointer);
 void put_pixel(long x, long y, unsigned int color);
 void put_pixel_buff(long x, long y, unsigned int color,void *buffer);
 void refresh_rate();

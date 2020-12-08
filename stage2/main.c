@@ -38,6 +38,14 @@ void main()
 	printf("===============================================\n");
 	
 	ata_initialize();
+	
+	
+	// TODO: 
+	dv_uid = -1;
+	dv_num = 0;
+	
+	
+	
 	printf("===============================================\n");
 	
 	printf("Read kernel.bin\n");
@@ -45,8 +53,7 @@ void main()
 	FILE *f = fopen("kernel.bin","r");
 	if(!f) {
 	
-		printf("error read kernel.bin %x\n",f);
-		
+		printf("error read kernel.bin\n");
 		for(;;);
 	}
 	
@@ -57,8 +64,6 @@ void main()
 	fread ((void*)0x400000, 1, size, f);
 	
 	fclose(f);
-	
-	
 	
 	printf("===============================================\n");
 	
@@ -73,17 +78,13 @@ void main()
 			for(;;);
 	
 	}
-	puts("How do I enable x86_64:\n");
-	puts("Disable paging\n");
-	puts("Set the PAE enable bit in CR4\n");
-	puts("Load CR3 with the physical address of the PML4\n");
-	puts("Enable long mode by setting the EFER.LME flag in MSR 0xC0000080\n");
-	puts("Enable paging\n");
+	
+	puts("Enable 4-level paging\n");
 	
 	page_install();
 
 	printf("===============================================\n");
 	
-	unsigned long pointer = (unsigned long) cof_parameter();
+	unsigned int pointer = (unsigned int) cof_parameter();
 	gdt_execute_long_mode(0x401000,pointer);
 }
