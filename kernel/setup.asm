@@ -12,10 +12,8 @@ start:
 	mov edi,ebx
 	call main
 	
-	
-
 	hlt
 	
 section .bss
-	resb 0x2000 ;8KiB
+	resb 0x4000 ;32KiB
 _stack:

@@ -131,23 +131,23 @@ Script de ligação e mapa de memória
 .igot.plt       0x0000000000405020        0x0 carregar endereço 0x0000000000005020
  .igot.plt      0x0000000000405020        0x0 setup.o
 
-.bss            0x0000000000405020     0x2fe0 carregar endereço 0x0000000000005020
+.bss            0x0000000000405020     0x4fe0 carregar endereço 0x0000000000005020
                 0x0000000000405020                bss = .
  *(.bss)
- .bss           0x0000000000405020     0x2000 setup.o
- .bss           0x0000000000407020        0x0 main.o
- .bss           0x0000000000407020        0x0 string.o
- .bss           0x0000000000407020        0x0 gui.o
- .bss           0x0000000000407020        0x0 font8x16.o
- .bss           0x0000000000407020        0x0 vsprintf.o
- .bss           0x0000000000407020        0x0 stdio.o
- .bss           0x0000000000407020        0x0 stdlib.o
+ .bss           0x0000000000405020     0x4000 setup.o
+ .bss           0x0000000000409020        0x0 main.o
+ .bss           0x0000000000409020        0x0 string.o
+ .bss           0x0000000000409020        0x0 gui.o
+ .bss           0x0000000000409020        0x0 font8x16.o
+ .bss           0x0000000000409020        0x0 vsprintf.o
+ .bss           0x0000000000409020        0x0 stdio.o
+ .bss           0x0000000000409020        0x0 stdlib.o
  *(COMMON)
- COMMON         0x0000000000407020       0x68 gui.o
-                0x0000000000407020                gui
-                0x0000000000408000                . = ALIGN (0x1000)
- *fill*         0x0000000000407088      0xf78 
-                0x0000000000408000                _end = .
+ COMMON         0x0000000000409020       0x68 gui.o
+                0x0000000000409020                gui
+                0x000000000040a000                . = ALIGN (0x1000)
+ *fill*         0x0000000000409088      0xf78 
+                0x000000000040a000                _end = .
 LOAD setup.o
 LOAD main.o
 LOAD string.o

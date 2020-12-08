@@ -1,4 +1,7 @@
-#include <io.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <pci.h>
+#include <gui.h>
 
 /*  BLT Engine Status (40000h 4FFFFh) (Software Debug) */
 #define BR00                  0x40000
@@ -169,15 +172,25 @@ typedef volatile struct _DISPLAY_PIPELINE {
 	CRCCTRLX	crc_blue_control;
 	CRCCTRLX	crc_residual_control;
 
-	CRCRESX		crc_red_result;
-	CRCRESX		crc_green_result;
-	CRCRESX		crc_blue_result;
-	CRCRESX		crc_residual_result;
+	CRCRESX	crc_red_result;
+	CRCRESX	crc_green_result;
+	CRCRESX	crc_blue_result;
+	CRCRESX	crc_residual_result;
 	//end
 }__attribute__ ((packed)) DISPLAY_PIPELINE;
 
 
-typedef struct pci {
+struct _framebuffer {
+
+	unsigned int width;
+	unsigned int height;
+	unsigned int stride;
+	unsigned int address;
+};
+
+
+
+typedef struct _pci {
 	uint8_t fun;
 	uint8_t dev;
 	uint8_t bus;
@@ -189,7 +202,7 @@ static int gpu_pci(int bus,int dev,int fun)
 
 	unsigned int did,vid;
 
-	print("PCI Display Controller\n");
+	printf("PCI Display Controller\n");
 	uint32_t data = 0;
 	uint32_t z0 = (fun &0xff) | ((dev &0xff) << 8) | ((bus &0xff) << 16);
 	pci_t *pci = (pci_t*)((uint32_t)&z0);
@@ -198,27 +211,27 @@ static int gpu_pci(int bus,int dev,int fun)
 
 	did = data >>16 &0xffff;
 	vid = data &0xffff;
-	print("Device ID: %X Vendor ID: %X\n",did,vid);
+	printf("Device ID: %X Vendor ID: %X\n",did,vid);
 	
 	data = pci_read_config_dword(pci->bus,pci->dev,pci->fun,0x10);
 
 	GTTMMADR = data&0xFFFFFFF0; 
 
-	print("BAR0 (MMIO region address): %X\n",GTTMMADR);
+	printf("BAR0 (MMIO region address): %X\n",GTTMMADR);
 	data = pci_read_config_dword(pci->bus,pci->dev,pci->fun,0x14);
-	print("BAR1: %X\n",data);
+	printf("BAR1: %X\n",data);
 	data = pci_read_config_dword(pci->bus,pci->dev,pci->fun,0x18);
 	GTTMMADR2 = data&0xFFFFFFF0;
-	print("BAR2 (Frame buffer address): %X\n",GTTMMADR2);
+	printf("BAR2 (Frame buffer address): %X\n",GTTMMADR2);
 	data = pci_read_config_dword(pci->bus,pci->dev,pci->fun,0x1C);
-	print("BAR3: %X\n",data);
+	printf("BAR3: %X\n",data);
 	data = pci_read_config_dword(pci->bus,pci->dev,pci->fun,0x20);
-	print("BAR4 (I/O Base Address): %X\n",data);
+	printf("BAR4 (I/O Base Address): %X\n",data);
 	data = pci_read_config_dword(pci->bus,pci->dev,pci->fun,0x24);
-	print("BAR5: %X\n",data);
+	printf("BAR5: %X\n",data);
 
 
-	if(did == 0x116)print("HD Graphics 3000\n");
+	if(did == 0x116)printf("HD Graphics 3000\n");
 
 
 
@@ -329,7 +342,7 @@ int gpu()
 
 	unsigned int data = pci_scan_bcc(3);
 	if(data == -1) {
-		print("panic: PCI Display Controller not found!\n");
+		printf("panic: PCI Display Controller not found!\n");
 		return -1;
 	}
 
@@ -374,67 +387,81 @@ int gpu()
 	 */
 	
 	// DPLL
-
-
 	*(unsigned int*)(GTTMMADR + DPLLA_CNTL) = 0x94020C00;
 	
 
 	// Setup the display timings of your desired mode
 	DISPLAY_PIPELINE *pipeline = (DISPLAY_PIPELINE*)(GTTMMADR + 0x60000);
 
-	pipeline->htotal.active = 1366 -1;
-	//pipeline->htotal.total = 0;
-	pipeline->vtotal.active = 768 - 1;
-	//pipeline->vtotal.total = 0;
-	pipeline->pi_peasrc.h_image_size = pipeline->htotal.active;
-	pipeline->pi_peasrc.v_image_size = pipeline->vtotal.active;
+	
 
+
+	struct _framebuffer fb;
+	
+	fb.width = 1366;
+	fb.height = 768;
+	fb.stride = fb.width * 4;
+	fb.address = 0;
+	
+	
+	pipeline->htotal.active = fb.width  - 1;
+	pipeline->vtotal.active = fb.height - 1;
+	pipeline->pi_peasrc.h_image_size = 1360-1;// pipeline->htotal.active;
+	pipeline->pi_peasrc.v_image_size = pipeline->vtotal.active;
 	
 
 	enable_display_pipe(GTTMMADR);
-	*(unsigned int*)(GTTMMADR + DSPASURF) = 0; // set framebuffer address
+	
+	
+	*(unsigned int*)(GTTMMADR + 0x70184) = 0; // plane offser
+	*(unsigned int*)(GTTMMADR + 0x70188) = fb.stride; // plane stride
+	*(unsigned int*)(GTTMMADR + 0x7019c) = fb.address; // plane address
+	
+	
+	/*TODO:testando o modo grafico native.
+	
+	gui->horizontal_resolution = 1360;//fb.width;
+	gui->vertical_resolution = fb.height;
+	gui->pixels_per_scan_line	= gui->horizontal_resolution;
+	
+	gui->x 	= 0;
+	gui->y 	= 0;
+	gui->width 	= gui->horizontal_resolution;
+	gui->height 	= gui->vertical_resolution;
+	
+	clears_creen();
+	
+	for(int y=0;y < 100;y++)
+	for(int x=0;x < 100;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(1360*y)) = 0xff0000ff;
+	
+	for(int x=0;x < 1360;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(1360*140)) = 0xffff0000;
+	
+	for(int x=0;x < 1360;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(1360*150)) = 0xff00ff00;
+	*/
+	
 	enable_all_plane(GTTMMADR);
 	enable_all_output_conectors(GTTMMADR);
 	
+	
+	printf("%d %d %d\n",*(unsigned int*)(GTTMMADR + 0x70188),*(unsigned int*)(GTTMMADR + 0x7019c),fb.stride);
 
-	print("DPLLA_CNTL 0x%x\n",*(unsigned int*)(GTTMMADR + DPLLA_CNTL));
+	printf("pipeline->htotal.total %d\n",pipeline->htotal.total);
+	printf("pipeline->vtotal.total %d\n",pipeline->vtotal.total);
 
+	printf("pipeline->hblank.start %d\n",pipeline->hblank.start);
+	printf("pipeline->hblank.end %d\n",pipeline->hblank.end);
+	printf("pipeline->vblank.start %d\n",pipeline->vblank.start);
+	printf("pipeline->vblank.end %d\n",pipeline->vblank.end);
 
-	print("pipeline->htotal.total %d\n",pipeline->htotal.total);
-	print("pipeline->vtotal.total %d\n",pipeline->vtotal.total);
-
-	print("pipeline->hblank.start %d\n",pipeline->hblank.start);
-	print("pipeline->hblank.end %d\n",pipeline->hblank.end);
-	print("pipeline->vblank.start %d\n",pipeline->vblank.start);
-	print("pipeline->vblank.end %d\n",pipeline->vblank.end);
-
-	print("pipeline->hsynic.start %d\n",pipeline->hsynic.start);
-	print("pipeline->hsynic.end %d\n",pipeline->hsynic.end);
-	print("pipeline->vsynic.start %d\n",pipeline->vsynic.start);
-	print("pipeline->vsynic.end %d\n",pipeline->vsynic.end);
+	printf("pipeline->hsynic.start %d\n",pipeline->hsynic.start);
+	printf("pipeline->hsynic.end %d\n",pipeline->hsynic.end);
+	printf("pipeline->vsynic.start %d\n",pipeline->vsynic.start);
+	printf("pipeline->vsynic.end %d\n",pipeline->vsynic.end);
 	
 
-	print("pipeline->pi_peasrc.h_image_size %d\n",pipeline->pi_peasrc.h_image_size);
-	print("pipeline->pi_peasrc.v_image_size %d\n",pipeline->pi_peasrc.v_image_size);
+	printf("pipeline->pi_peasrc.h_image_size %d\n",pipeline->pi_peasrc.h_image_size);
+	printf("pipeline->pi_peasrc.v_image_size %d\n",pipeline->pi_peasrc.v_image_size);
 
-
-
-	print("DPLL_CTL_A %x\n",*(unsigned int*)(GTTMMADR + 0xC6014));
-
-	print("BR00 %x %x\n",*(unsigned int*)(GTTMMADR + 0x10000),*(unsigned int*)(GTTMMADR + 0x20000));
-	print("BR01 %x %x\n",*(unsigned int*)(GTTMMADR + 0x10004),*(unsigned int*)(GTTMMADR + 0x20004));
-	print("BR02 %x %x\n",*(unsigned int*)(GTTMMADR + 0x10008),*(unsigned int*)(GTTMMADR + 0x20008));
-	print("BR03 %x %x\n",*(unsigned int*)(GTTMMADR + 0x1000c),*(unsigned int*)(GTTMMADR + 0x2000c));
-	print("BR04 %x %x\n",*(unsigned int*)(GTTMMADR + 0x10010),*(unsigned int*)(GTTMMADR + 0x20010));
-	print("BR05 %x %x\n",*(unsigned int*)(GTTMMADR + 0x10004),*(unsigned int*)(GTTMMADR + 0x20004));
-	
-	
-
-	print("done");
-
-	*(unsigned int*)(GTTMMADR + BR00) = 0xf4000000;
-	*(unsigned int*)(GTTMMADR + BR22) = 400 | 200 << 16;
-		
 
 
 	return (0);

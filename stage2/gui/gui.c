@@ -37,6 +37,8 @@ void initialize_gui()
 	gui->y 	= 0;
 	gui->width 	= gui->horizontal_resolution;
 	gui->height 	= gui->vertical_resolution;
+	
+	gui->pixels_per_scan_line = gui->horizontal_resolution;
 
 
 	gui->font.x = 8;
@@ -111,7 +113,7 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 
 int glyph(int ch)
 {
-
+	//return 0;
 	if(ch == '\n') {
 	
 		gui->cursor_x = 0;

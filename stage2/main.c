@@ -12,6 +12,7 @@
 #include <data.h>
 
 extern unsigned int *cof_parameter();
+extern int gpu();
 void main()
 {
 
@@ -23,7 +24,6 @@ void main()
 	printf("===============================================\n");
 	
 	char cpu[64];
-	//cpuid_vendor(s);
 	cpuid_processor_brand(cpu);
 	printf("%s\n",cpu);
 	printf("===============================================\n");
@@ -36,6 +36,11 @@ void main()
 	idt_install();
 
 	printf("===============================================\n");
+	
+	
+	gpu();
+	
+	for(;;);
 	
 	ata_initialize();
 	
