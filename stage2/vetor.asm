@@ -5,17 +5,15 @@ global isr10,isr11,isr12,isr13,isr14,isr15,isr16,isr17,isr18,isr19
 global isr20,isr21,isr22,isr23,isr24,isr25,isr26,isr27,isr28,isr29
 global isr30,isr31
 
-
 extern fault_exception
 isr_jmp:
-	cli
-	pushad
+pushad
 	push ds
 	push es
 	push fs
 	push gs
     	push ss
-	mov eax,[esp+52]	; pega vector number
+	mov eax,[esp+52]	; pega vetor
 	push eax
 	mov eax,0x10
 	mov ds,ax
@@ -33,8 +31,8 @@ isr_jmp:
 	pop ds
 	popad	
 	add esp,8
-	sti
 	iretd
+
 isr00:
 	push dword 0
 	push dword 0
@@ -163,104 +161,132 @@ isr31:
 	push dword 0
 	push dword 31
 	jmp isr_jmp
-	
-global irq0,irq1,irq2,irq3,irq4,irq5,irq6,irq7,irq8,irq9
+
+global irq00,irq01,irq02,irq03,irq04,irq05,irq06,irq07,irq08,irq09
 global irq10,irq11,irq12,irq13,irq14,irq15
 
+
 extern irq_function
+irq00:
+
+	push dword 0
+	push dword 32
 irq_jmp:
-	cli
 	pushad
 	push ds
 	push es
+	push ss
 	push fs
 	push gs
-    	push ss
-	mov eax,[esp+52]	; pega vector number
+	mov eax,[esp+52]	; pega vetor
 	push eax
 	mov eax,0x10
 	mov ds,ax
 	mov es,ax
 	mov fs,ax
 	mov gs,ax
-	pop eax
-	push eax
+
+
+
 	call irq_function
-	pop eax	
-    	pop ss
+    	pop eax
+
 	pop gs
 	pop fs
+	pop ss
 	pop es
 	pop ds
-	popad	
+    	popad
 	add esp,8
-
-	sti
 	iretd
 
 
-irq0:
-	push dword 0
-	push dword 32
-	jmp irq_jmp
-irq1:
+irq01:
+
 	push dword 0
 	push dword 33
 	jmp irq_jmp
-irq2:
+
+irq02:
+
 	push dword 0
 	push dword 34
 	jmp irq_jmp
-irq3:
+
+irq03:
+
 	push dword 0
 	push dword 35
 	jmp irq_jmp
-irq4:
+
+irq04:
+
 	push dword 0
 	push dword 36
 	jmp irq_jmp
-irq5:
+
+irq05:
+
 	push dword 0
 	push dword 37
 	jmp irq_jmp
-irq6:
-	push dword 0
-	push dword 38
+
+irq06:
+
+	push BYTE 0
+	push BYTE 38
 	jmp irq_jmp
-irq7:
+
+irq07:
+
 	push dword 0
 	push dword 39
 	jmp irq_jmp
-irq8:
+
+irq08:
+
 	push dword 0
 	push dword 40
 	jmp irq_jmp
-irq9:
+
+irq09:
+
 	push dword 0
 	push dword 41
 	jmp irq_jmp
 
 irq10:
+
 	push dword 0
 	push dword 42
 	jmp irq_jmp
+
 irq11:
+
 	push dword 0
 	push dword 43
 	jmp irq_jmp
+
 irq12:
+
 	push dword 0
 	push dword 44
 	jmp irq_jmp
+
 irq13:
+
 	push dword 0
 	push dword 45
 	jmp irq_jmp
+
 irq14:
+
 	push dword 0
 	push dword 46
 	jmp irq_jmp
+
 irq15:
+
 	push dword 0
 	push dword 47
 	jmp irq_jmp

@@ -75,7 +75,7 @@ const char *pci_classes[]={
 };
 
 //PCI Express, compatibility to PCI local Bus 3.0 
-PCI_CLASS_NAME pci_class_names [256] = {
+/*PCI_CLASS_NAME pci_class_names [256] = {
   	{0x000000, 	"Non-VGA-Compatible devices"								},
   	{0x000100, 	"VGA-Compatible Device"									},
   	{0x010000, 	"SCSI bus controller"									},
@@ -238,7 +238,7 @@ supports both channels switched to ISA compatibility mode, supports bus masterin
 	{0x118000, 	"Other Signal Processing Controller"							},
   	{0x000000, 	"Null"											}
 };
-
+*/
 int read_pci_config_addr(int bus,int dev,int fun, int offset)
 {
     	outportl(PCI_PORT_ADDR,CONFIG_ADDR(bus,dev,fun, offset));
@@ -279,9 +279,9 @@ int pci_get_info(void *buffer,int max_bus)
 				if(data == -1)
 					continue;
 				for(i = 0;i < 256;i++) {
-					if((pci_class_names[i].classcode &0xffffff) != (data >> 8 &0xffffff))
+					/*if((pci_class_names[i].classcode &0xffffff) != (data >> 8 &0xffffff))
 						continue;
-					printf("%s",pci_class_names[i].name);
+					printf("%s",pci_class_names[i].name);*/
 					printf(", B%d:D%d:F%d\n",bus,dev,fun); //FIXME
 					break;
 

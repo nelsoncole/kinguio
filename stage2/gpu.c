@@ -389,7 +389,6 @@ int gpu()
 	// DPLL
 	*(unsigned int*)(GTTMMADR + DPLLA_CNTL) = 0x94020C00;
 	
-
 	// Setup the display timings of your desired mode
 	DISPLAY_PIPELINE *pipeline = (DISPLAY_PIPELINE*)(GTTMMADR + 0x60000);
 
@@ -403,10 +402,22 @@ int gpu()
 	fb.stride = fb.width * 4;
 	fb.address = 0;
 	
+	int width = fb.width;
+	if(fb.stride%64) {
+	
+	
+		width = (fb.stride/64);
+		width = (width*64)/4;
+		
+	
+	}
+	
+	
+	
 	
 	pipeline->htotal.active = fb.width  - 1;
 	pipeline->vtotal.active = fb.height - 1;
-	pipeline->pi_peasrc.h_image_size = 1360-1;// pipeline->htotal.active;
+	pipeline->pi_peasrc.h_image_size = width-1;//pipeline->htotal.active;
 	pipeline->pi_peasrc.v_image_size = pipeline->vtotal.active;
 	
 
@@ -418,9 +429,9 @@ int gpu()
 	*(unsigned int*)(GTTMMADR + 0x7019c) = fb.address; // plane address
 	
 	
-	/*TODO:testando o modo grafico native.
+	//TODO:testando o modo grafico native.
 	
-	gui->horizontal_resolution = 1360;//fb.width;
+	gui->horizontal_resolution = width;//fb.width;
 	gui->vertical_resolution = fb.height;
 	gui->pixels_per_scan_line	= gui->horizontal_resolution;
 	
@@ -432,12 +443,11 @@ int gpu()
 	clears_creen();
 	
 	for(int y=0;y < 100;y++)
-	for(int x=0;x < 100;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(1360*y)) = 0xff0000ff;
+	for(int x=0;x < 100;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(gui->width*y)) = 0xff0000ff;
 	
-	for(int x=0;x < 1360;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(1360*140)) = 0xffff0000;
+	for(int x=0;x < gui->width;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(gui->width*140)) = 0xffff0000;
 	
-	for(int x=0;x < 1360;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(1360*150)) = 0xff00ff00;
-	*/
+	for(int x=0;x < gui->width;x++) *(unsigned int*)((unsigned int*)gui->virtual_buffer+x+(gui->width*180)) = 0xff00ff00;
 	
 	enable_all_plane(GTTMMADR);
 	enable_all_output_conectors(GTTMMADR);

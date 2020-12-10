@@ -81,6 +81,7 @@ void refresh_rate()
 void clears_creen() 
 {
 	memset((void*)gui->virtual_buffer/*G->BankBuffer*/,0,gui->width * (gui->height) * (gui->bpp/8));
+	gui->cursor_x = gui->cursor_y = 0;
 }
 
 
@@ -113,7 +114,8 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 
 int glyph(int ch)
 {
-	//return 0;
+	
+	
 	if(ch == '\n') {
 	
 		gui->cursor_x = 0;
@@ -121,6 +123,9 @@ int glyph(int ch)
 		return ch;
 	
 	}
+	
+	if(ch < ' ') return ch;
+	
 	
 	if(gui->cursor_y*gui->font.y >= gui->height) {
 	

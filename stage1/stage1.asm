@@ -9,6 +9,7 @@
 	%include "getpm.asm"
 	%include "a20.asm"
 	%include "vesa.asm"
+	%include "edid.asm"
 	%include "gdt.asm"
 
 
@@ -29,7 +30,6 @@ start:
 	
 	mov si, string
 	call print
-	
 	
 ; BIOSes Get Device Parameters
 	call GetDeviceParameters
@@ -63,6 +63,7 @@ start:
 ._ok:
 
 ; Definir o modo VESA
+	call edid
 	call vesa_vbe_mode
 	
 ; Mascara interrupções e desabilita NMI

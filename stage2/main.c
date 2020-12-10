@@ -10,9 +10,11 @@
 #include <cpuid.h>
 #include <paging.h>
 #include <data.h>
+#include <irq.h>
+#include <ps2.h>
 
 extern unsigned int *cof_parameter();
-extern int gpu();
+extern int i965();
 void main()
 {
 
@@ -32,14 +34,18 @@ void main()
 	printf("===============================================\n");
 	
 	printf("GDT and IDT install\n");
+	
 	gdt_install();
 	idt_install();
 
 	printf("===============================================\n");
+		
 	
 	
-	gpu();
 	
+	i965();
+	mouse_install();
+	sti();
 	for(;;);
 	
 	ata_initialize();
