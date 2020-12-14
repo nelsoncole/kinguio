@@ -70,6 +70,7 @@ long_mode:
     	mov esp, ebp
 	pop ebp
 	
+	cli
 	push ebx
 	jmp edx
 	

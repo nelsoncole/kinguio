@@ -426,13 +426,9 @@ static int sata_port_initialize(HBA_MEM_T *mmio)
 	// HBA Reset (HR) (mmio->ghc&0x1)
 
 	int total_np = (mmio->cap &0x1f) + 1;
-    	unsigned int pi = mmio->pi;
 	
 	// salve
-	ata->ptotal = total_np;
-
-	printf("Serial ATA, total np %d, pi 0x%x, mmio->ghc = 0x%x\n",total_np,pi,mmio->ghc);
-	
+	ata->ptotal = total_np;	
 	
     	for(i =0;i < total_np;i++)
     	{

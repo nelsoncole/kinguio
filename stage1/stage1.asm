@@ -28,9 +28,6 @@ start:
 	mov byte[dv_num],dl
 	mov dword[uid],ebx
 	
-	mov si, string
-	call print
-	
 ; BIOSes Get Device Parameters
 	call GetDeviceParameters
 

@@ -130,7 +130,25 @@ file_read:
 	mov bx,word[file_address_bx]
 	add bx,word[address_offset]
 	call read_mul
+	
+	mov ax,word[super_block_sector_por_blk]
+	mul word[super_block_byte_per_sector]
+	
+	mov bx,0xF000
+	sub bx,ax
+	add bx,0x1000
+	
+	cmp word[address_offset],bx
+	je .new_offset
+	
 	add word[address_offset], 0x2000
+	jmp .cur_offset
+.new_offset:
+
+	mov word[address_offset],0
+	add word[file_address_di],0x1000
+	
+.cur_offset:
 	
 	
 ; verificar eof

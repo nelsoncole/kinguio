@@ -7,6 +7,62 @@
 
 i965_t gtt[1];
 
+
+unsigned int cursor18x18[18] = {
+
+	0b100000000000000000,
+	0b110000000000000000,
+	0b111000000000000000,
+	0b111100000000000000,
+	0b110110000000000000,
+	0b110011000000000000,
+	0b110001100000000000,
+	0b110000110000000000,
+	0b110000011000000000,
+	0b110000001100000000,
+	0b110000000110000000,
+	0b110000000011000000,
+	0b110000000001100000,
+	0b110000000000110000,
+	0b111110000011111000,
+	0b100011000011000000,
+	0b000000110011000000,
+	0b000000011110000000,
+
+
+};
+
+
+void DrawMouse(unsigned int color, unsigned int *buffer,void *MouseBuffer)
+{
+	unsigned int font = 0;
+	const unsigned int *font_data = (const unsigned int*) MouseBuffer;
+	unsigned int mask;
+	unsigned int *u;
+	
+	for(int t=0;t < 18;t++) {
+	
+		u = (unsigned int *) buffer + 64*t;
+		
+		mask = 1;
+        	font = font_data[t];
+		
+		for(int i= 18 -1 ;i >= 0;i--)
+		{
+			
+                     if(font&mask) {
+                       	u[i] = color;
+                     }
+                       
+			mask += mask;
+	
+		}
+			
+		
+	} 	
+
+}
+
 int i965_pci_init(int bus, int dev, int fun)
 {	
 	unsigned data = pci_read_config_dword(bus, dev, fun, 0x00);
@@ -38,9 +94,11 @@ int i965()
 
 	i965_pci_init(data  >>  8 &0xff,data  >> 3  &31,data &7);
 	
-	
-	printf("device id %x, vendor id %x\n",gtt->did,gtt->vid);
-	printf("mmio_base 0x%x, memory 0x%x, iobar 0x%x\n",gtt->mmio_base,gtt->memory,gtt->iobar );
+	if((gtt->vid &0xffff) != 0x8086) { 
+		
+		printf("Graphic Native Intel, not found, device id %x, vendor id %x\n",gtt->did,gtt->vid);
+		return 1;
+	}
 	
 	
 	/*char edid[128];
@@ -61,6 +119,14 @@ int i965()
 	
 	// Setup the display timings of your desired mode
 	timings(gtt,fb,mode);
+	
+	for(int y=0;y < mode->height;y++) {
+		for(int x=0;x < mode->width;x++) {
+			*(unsigned int*)((unsigned int*)gtt->memory+x+(mode->width*y)) = 0x0;
+		}
+	}
+	
+	
 	enable_pipe(gtt);
 	
 	// Set a framebuffer address and stride and enable the primary plane and all secondary planes that you wish to use.
@@ -76,8 +142,10 @@ int i965()
 	enable_dac(gtt);
 	
 	
-	for(int y=0;y < mode->height;y++)
-	for(int x=0;x < mode->width;x++) *(unsigned int*)((unsigned int*)gtt->memory+x+(mode->width*y)) = 0x000088;
+	outanyb(0x80);
+	outanyb(0x80);
+	outanyb(0x80);
+	outanyb(0x80);
 	
 	
 	gui->horizontal_resolution = mode->width;
@@ -89,30 +157,29 @@ int i965()
 	gui->width 	= gui->horizontal_resolution;
 	gui->height 	= gui->vertical_resolution;
 	
-	//clears_creen();
-	
 	gui->cursor_x = gui->cursor_y = 0;
-	
 	
 	printf("Graphic Native Intel\n");
 	
 	
-	memset((char*)0x50000,-1,64*64*4);
+	for(int i=0; i < 64*64; i++) {
+	
+		*(unsigned int*)(0x500000 + gtt->memory + i*4) = 0;
+	
+	}
 	
 	
-	*(unsigned int*)(gtt->mmio_base + 0x70084) = 0x50000;
+	DrawMouse(-1, (unsigned int *)(0x500000 + gtt->memory),cursor18x18);
 	
-	*(unsigned int*)(gtt->mmio_base + 0x70080) = 0x18000027;
 	
-	*(unsigned int*)(gtt->mmio_base + 0x70088) = 0x1000100;
+	
+	*(unsigned int*)(gtt->mmio_base + 0x70080) = 0x7;
+	
+	*(unsigned int*)(gtt->mmio_base + 0x70088) = 0x01000200;
+	
+	*(unsigned int*)(gtt->mmio_base + 0x70084) = 0x500000;
 
-	
-	printf("Cursor A Control Register %x\n",*(unsigned int*)(gtt->mmio_base + 0x70080));
-	printf("Cursor A Base Address Register %x\n",*(unsigned int*)(gtt->mmio_base + 0x70084));
-	printf("Cursor A Position Register %x\n",*(unsigned int*)(gtt->mmio_base + 0x70088));
-	
 
-	
 	return 0;
 }
 

@@ -127,7 +127,7 @@ int glyph(int ch)
 	if(ch < ' ') return ch;
 	
 	
-	if(gui->cursor_y*gui->font.y >= gui->height) {
+	if(gui->cursor_y*gui->font.y >= gui->height-16) {
 	
 		gui->cursor_y = 0;
 	}

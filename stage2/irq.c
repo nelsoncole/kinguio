@@ -49,7 +49,7 @@ void default_irq(){
 // Lista de funções c de entrada ao manipulador de IRQs.
 static void *fnvetors_handler[16] = {
     &default_irq,//&timer_handler, // 0
-    &default_irq,//&keyboard_handler, // 1
+    &keyboard_handler, // 1
     &default_irq, // 2
     &default_irq, // 3
     &default_irq, // 4
@@ -97,9 +97,9 @@ void irq_enable(int irq)
 	
 	if(irq < 8 ) outportb(0x21, inportb(0x21) & OCW1);
 	else {
-	irq -= 8;
 	
-	outportb(0xA1,inportb(0xA1) & (OCW1 >> 8));}
+		outportb(0xA1,inportb(0xA1) & (OCW1 >> 8));
+	}
 
 }
 

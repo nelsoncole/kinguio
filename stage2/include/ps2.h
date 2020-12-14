@@ -36,6 +36,9 @@ void mouse_install();
 //KEYBOARD
 #define KBDC_LED 0xED
 
+void keyboard_install();
+void keyboard_handler(void);
+
 
 
 

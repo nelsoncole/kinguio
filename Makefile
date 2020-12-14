@@ -19,7 +19,7 @@ test:
 	./fs -g bin/stage2.bin disk.vhd
 	./fs -g bin/kernel.bin disk.vhd
 	./fs -g README.md disk.vhd
-	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw,bus=0
+	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw,bus=0 -usb -device usb-ehci,id=ehci
 	
 fs:
 	gcc -Wall -C fs.c -o fs

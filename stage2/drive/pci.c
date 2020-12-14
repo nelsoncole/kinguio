@@ -1,39 +1,3 @@
-/*
- * File Name: pci.c
- *
- *
- * BSD 3-Clause License
- * 
- * Copyright (c) 2019, nelsoncole
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived from
- *   this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- */
-
 #include <pci.h>
 
 const char *pci_classes[]={
@@ -75,7 +39,7 @@ const char *pci_classes[]={
 };
 
 //PCI Express, compatibility to PCI local Bus 3.0 
-/*PCI_CLASS_NAME pci_class_names [256] = {
+PCI_CLASS_NAME pci_class_names [256] = {
   	{0x000000, 	"Non-VGA-Compatible devices"								},
   	{0x000100, 	"VGA-Compatible Device"									},
   	{0x010000, 	"SCSI bus controller"									},
@@ -238,7 +202,7 @@ supports both channels switched to ISA compatibility mode, supports bus masterin
 	{0x118000, 	"Other Signal Processing Controller"							},
   	{0x000000, 	"Null"											}
 };
-*/
+
 int read_pci_config_addr(int bus,int dev,int fun, int offset)
 {
     	outportl(PCI_PORT_ADDR,CONFIG_ADDR(bus,dev,fun, offset));
@@ -279,9 +243,9 @@ int pci_get_info(void *buffer,int max_bus)
 				if(data == -1)
 					continue;
 				for(i = 0;i < 256;i++) {
-					/*if((pci_class_names[i].classcode &0xffffff) != (data >> 8 &0xffffff))
+					if((pci_class_names[i].classcode &0xffffff) != (data >> 8 &0xffffff))
 						continue;
-					printf("%s",pci_class_names[i].name);*/
+					printf("%s",pci_class_names[i].name);
 					printf(", B%d:D%d:F%d\n",bus,dev,fun); //FIXME
 					break;
 
@@ -363,6 +327,7 @@ unsigned int pci_scan_bcc_scc(unsigned int bcc,unsigned int scc)
     unsigned int data = -1;
 
     int bus, dev, fun;
+    unsigned int r;
 
     
     for(bus = 0;bus < MAX_BUS; bus++){
@@ -371,7 +336,9 @@ unsigned int pci_scan_bcc_scc(unsigned int bcc,unsigned int scc)
                 outportl(PCI_PORT_ADDR,CONFIG_ADDR(bus,dev,fun, 0x8));
                 data =inportl(PCI_PORT_DATA);
                 if(((data >> 24 &0xff) == bcc) && ((data >> 16 &0xff) == scc)){
-                    return (fun + (dev *8) + (bus * 32));
+                     
+                    r = fun | dev << 16 | bus << 24;
+                    return r;
             
                 }
             }
@@ -389,6 +356,7 @@ unsigned int pci_scan_bcc_scc_prog(unsigned int bcc,unsigned int scc,unsigned in
     unsigned int data = -1;
 
     int bus, dev, fun;
+    unsigned int r;
 
     
     for(bus = 0;bus < MAX_BUS; bus++){
@@ -397,7 +365,8 @@ unsigned int pci_scan_bcc_scc_prog(unsigned int bcc,unsigned int scc,unsigned in
                 outportl(PCI_PORT_ADDR,CONFIG_ADDR(bus,dev,fun, 0x8));
                 data =inportl(PCI_PORT_DATA);
                 if(((data >> 24 &0xff) == bcc) && ((data >> 16 &0xff) == scc) && ((data >> 8 &0xff) == prog)){
-                    return (fun + (dev * 8) + (bus * 32));
+                    r = fun | dev << 16 | bus << 24;
+                    return r;
             
                 }
             }

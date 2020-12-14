@@ -2,6 +2,12 @@
 #ifndef __IO_H__
 #define __IO_H__
 
+
+#define outanyb(p) \
+__asm__ __volatile__(\
+"outb %%al,%0"::"dN"((p)) :"eax"\
+)  /* Valeu Fred */
+
 //IO R/W BYTE
 #define inportb(p)({\
 	unsigned char val;\

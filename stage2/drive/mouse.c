@@ -4,6 +4,7 @@
 #include <gui.h>
 #include <irq.h>
 #include <stdio.h>
+#include <string.h>
 
 #define SINAL_N -
 #define SINAL_P +
@@ -141,6 +142,10 @@ void mouse_install()
 
 
 	mouse = (mouse_t *) malloc(sizeof(mouse_t));
+	memset(mouse,0,sizeof(mouse_t));
+	
+	mouse->x = 0x200;
+	mouse->y = 0x100;
 	
 	// IRQ set handler
 	// Enable IRQ Interrupt
@@ -203,7 +208,9 @@ void mouse_handler(void) {
 }
 
 #include <i965.h>
-i965_t gtt[1];
+extern i965_t gtt[1];
+extern mode_t mode[1];
+int flg = 0;
 // Actualizador do ponto de acomulação do mouse
 static void mouse_refresh(){
 
@@ -240,9 +247,14 @@ static void mouse_refresh(){
      	
      	
      	*(unsigned int*)(gtt->mmio_base + 0x70088) = (mouse->x &0x7fff) | (mouse->y &0x7fff) << 16;
-     
-    
-
+     	
+     	/*if(mouse->b == 0x9) flg = 1;
+     	else if(mouse->b == 0xA) flg = 0;
+     	
+     	
+     	if(flg)
+     	*(unsigned int*)((unsigned int*)gtt->memory+mouse->x+(mode->width*mouse->y)) = -1;
+	*/
 }
 
 

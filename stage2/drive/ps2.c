@@ -5,13 +5,6 @@
 // Esta função é usada para a calibragem do IBF e OBF
 // Se a entra é 0 = IBF, se entrada é 1 = OBF
 
-
-#define outanyb(p) \
-__asm__ __volatile__(\
-"outb %%al,%0"::"dN"((p)) :"eax"\
-)  /* Valeu Fred */
-
-
 void kbdc_wait(int type)
 {
 

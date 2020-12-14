@@ -12,6 +12,7 @@
 #include <data.h>
 #include <irq.h>
 #include <ps2.h>
+#include <ehci.h>
 
 extern unsigned int *cof_parameter();
 extern int i965();
@@ -21,8 +22,7 @@ void main()
 	initialize_heap(DEF_HEAP_START);
 	initialize_gui();
 	
-	printf("===============================================\n");
-	printf("Run: stage 2, 32-bit, start = 0x11000\n");
+
 	printf("===============================================\n");
 	
 	char cpu[64];
@@ -30,7 +30,7 @@ void main()
 	printf("%s\n",cpu);
 	printf("===============================================\n");
 	
-	printf("Video mode: %dx%dx%d\n",gui->width,gui->height,gui->bpp);
+	printf("VBE video mode: %dx%dx%d\n",gui->width,gui->height,gui->bpp);
 	printf("===============================================\n");
 	
 	printf("GDT and IDT install\n");
@@ -39,23 +39,28 @@ void main()
 	idt_install();
 
 	printf("===============================================\n");
-		
-	
-	
 	
 	i965();
+	keyboard_install();
 	mouse_install();
 	sti();
-	for(;;);
 	
+	for(;;);
+	printf("===============================================\n");
 	ata_initialize();
 	
+	printf("===============================================\n");
+	pci_get_info(0,2);
 	
 	// TODO: 
 	dv_uid = -1;
 	dv_num = 0;
 	
+	printf("===============================================\n");
 	
+	ehci_init();
+	
+	for(;;);
 	
 	printf("===============================================\n");
 	
@@ -91,7 +96,6 @@ void main()
 	}
 	
 	puts("Enable 4-level paging\n");
-	
 	page_install();
 
 	printf("===============================================\n");
