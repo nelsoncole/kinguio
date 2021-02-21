@@ -19,7 +19,7 @@
 %endmacro
 
 %macro PUSH_GPR	0
-	;SAVE_GPR rsp
+	SAVE_GPR rsp
 	sub rsp, 0x80
 %endmacro
 
@@ -35,7 +35,7 @@
 	mov rdi, [%1-0x48]
 	mov rsi, [%1-0x50]
 	mov rbp, [%1-0x58]
-	;mov rsp, [%1-0x60]
+	mov rsp, [%1-0x60]
 	mov rbx, [%1-0x68]
 	mov rdx, [%1-0x70]
 	mov rcx, [%1-0x78]
@@ -44,5 +44,5 @@
 
 %macro POP_GPR	0
 	add rsp, 0x80
-	;RESTORE_GPR rsp
+	RESTORE_GPR rsp
 %endmacro
