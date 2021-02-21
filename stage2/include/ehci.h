@@ -66,10 +66,155 @@ typedef struct _ehci {
 	unsigned int mmio_base;
 }__attribute__((packed)) ehci_t;
 
+typedef struct  {
+    unsigned char bRequestType;
+    unsigned char bRequest;
+    unsigned short wValue;
+    unsigned short wIndex;
+    unsigned short wLength;
+} EhciCMD;
 
+typedef struct {
+	unsigned char bLength;
+	unsigned char bDescriptorType;
+	unsigned char bEndpointAddress;
+	unsigned char bmAttributes;
+	unsigned short wMaxPacketSize;
+	unsigned char bInterval;
+}EHCI_DEVICE_ENDPOINT;
+
+
+#define EHCI_PERIODIC_FRAME_SIZE    1024
+
+
+#define MAX_QH                          8
+#define MAX_TD                          32
+
+typedef volatile struct _EHCI_TD
+{
+	unsigned int nextlink;
+    	unsigned int altlink;
+    	unsigned int token;
+    	unsigned int buffer[5];
+    	unsigned int extbuffer[5];
+    	
+
+}__attribute__((packed)) EHCI_TD;
+
+typedef volatile struct _EHCI_QH
+{
+    	unsigned int qhlp;       // Queue Head Horizontal Link Pointer
+    	unsigned int ch;         // Endpoint Characteristics
+    	unsigned int caps;       // Endpoint Capabilities
+    	unsigned int curlink;
+
+    	// matches a transfer descriptor
+    	unsigned int nextlink;
+    	unsigned int altlink;
+    	unsigned int token;
+    	unsigned int buffer[5];
+    	unsigned int extbuffer[5];
+
+} __attribute__((packed)) EHCI_QH;
+
+
+//
+//
+struct cdbres_inquiry {
+    unsigned char pdt;
+    unsigned char removable;
+    unsigned char reserved_02[2];
+    unsigned char additional;
+    unsigned char reserved_05[3];
+    char vendor[8];
+    char product[16];
+    char rev[4];
+} __attribute__ ((packed));
+
+struct cbw_t {
+	unsigned long sig;
+	unsigned long tag;
+	unsigned long xfer_len;
+	unsigned char flags;
+	unsigned char lun;
+	unsigned char wcb_len;
+	unsigned char cmd[16];
+}  __attribute__ ((packed));
+
+typedef struct __attribute__ ((packed)) {
+	unsigned long signature;
+	unsigned long tag;
+	unsigned long dataResidue;
+	unsigned char status;
+}CommandStatusWrapper;
+
+struct rdcap_10_response_t {
+	unsigned long max_lba;
+	unsigned long blk_size;
+} __attribute__ ((packed));
+
+typedef struct {
+	unsigned char key;
+	unsigned char code;
+	unsigned char qualifier;
+}SCSIStatus;
+
+#define USB_STORAGE_ENABLE_ENQ 1
+#define USB_STORAGE_ENABLE_CAP 0
+#define USB_STORAGE_ENABLE_SEC 1
+#define USB_STORAGE_SECTOR_SIZE 512
+#define USB_STORAGE_CSW_SIGN 0x53425355
+
+
+void ehci_asynchronous_schedule_enable (EHCI_MEM_T *mmio);
+void ehci_asynchronous_schedule_disable(EHCI_MEM_T *mmio);
 
 int ehci_init(void);
 
+
+void ehci_int_td( EHCI_TD *td, EHCI_TD *nextlink, unsigned int toggle, unsigned int packettype,
+unsigned int len, const void *data);
+
+int ehci_wait_for_completion(EHCI_TD *td);
+void ehci_init_qh(EHCI_QH *sqh1, EHCI_QH *sqh2, EHCI_QH *curlink, EHCI_TD *std, int interrupt, 
+unsigned int speed,unsigned int addr, unsigned int endp, unsigned int maxSize);
+
+int usb_hub_init();
+
+struct usb_hub_desc {
+	unsigned char length;
+	unsigned char type;
+	unsigned char portcnt;
+	unsigned short characteristics;
+	unsigned char pwdgood;
+	unsigned char current;
+	unsigned char variable[2];
+
+}__attribute__ ((packed));
+
+struct usb_device_desc {
+    	unsigned char length;
+	unsigned char type;
+    	unsigned short bcdusb;
+    	unsigned char class;
+   	unsigned char subclass;
+    	unsigned char protocol;
+    	unsigned char maxpacketsize;
+   	unsigned short vendorid;
+    	unsigned short productid;
+    	unsigned short devicever;
+    	unsigned char vendorstr;
+    	unsigned char productstr;
+    	unsigned char serialstr;
+   	unsigned char confcount;
+} __attribute__ ((packed));
+
+int usb_control_msg (EHCI_MEM_T *controller, int port, 
+			int bRequestType,
+                     	int bRequest,
+			int wValue,
+    			int wIndex, int wLength, void *data);
+    			
 
 
 

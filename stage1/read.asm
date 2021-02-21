@@ -79,7 +79,7 @@ file_read:
 	
 	xor dx,dx
 	mov si,word[filesystem_address]
-	mov di,filename
+	mov di,word[file_filename]
 	mov bx, 64
 	xor cx,cx
 ._1:	
@@ -98,7 +98,7 @@ file_read:
 .next_entry:
 	xor cx,cx
 	add dx,128
-	mov di,filename
+	mov di,word[file_filename]
 	mov si,word[filesystem_address]
 	add si,dx
 	cmp bx,0
@@ -119,7 +119,9 @@ file_read:
 	
 ; ler o arquivo
 ; eax = LBA, ecx = count
-._next_blk:	
+._next_blk:
+
+	add word[file_sector_count],1	
 	mov eax,dword[first_blk]
 	mul dword[super_block_sector_por_blk]
 	add eax,dword[data_sector]

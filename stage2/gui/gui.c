@@ -8,8 +8,8 @@ void initialize_gui()
 {
 	gui = (struct _gui*) malloc(sizeof(gui_t));
 	memset(gui,0,sizeof(gui_t));
-
-		// BIOS VESA Video and Audio
+	
+	// BIOS VESA Video and Audio
 	unsigned char *vbe = (unsigned char*)0x40200;
 	unsigned char *vbe_info_mode = (unsigned char*)0x40200 + 0x200;
 

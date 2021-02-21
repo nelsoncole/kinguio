@@ -40,6 +40,26 @@ FILE *fd1;
 
 unsigned char data[512];
 
+char __filename[128];
+const char *print_filename(const char *filename){
+
+	
+	memcpy(__filename,filename,96);
+	
+	__filename[96] = '\0';
+	
+	for(int i=95; i >= 0; i--){
+	
+		if(__filename[i] == ' ') __filename[i] = '\0';
+		else {
+			break;
+		}
+	
+	}
+	
+	return __filename;
+}
+
 
 void read_super_block(FILE *fd,super_block *fs)
 {
@@ -495,7 +515,7 @@ __gravar:
 	if(!r) {
 		copy(fd1,&fs,directory,argv[a]);
 		printf("Copiado: %s, %d bytes, blk %d, dir entry %d\n",
-		directory->filename, directory->filesize,directory->blk,directory->entry);
+		print_filename(directory->filename), directory->filesize,directory->blk,directory->entry);
 	}
 	
 	

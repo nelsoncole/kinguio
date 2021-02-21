@@ -16,6 +16,7 @@
 
 extern unsigned int *cof_parameter();
 extern int i965();
+extern int file_sector_count;
 void main()
 {
 
@@ -24,6 +25,7 @@ void main()
 	
 
 	printf("===============================================\n");
+	
 	
 	char cpu[64];
 	cpuid_processor_brand(cpu);
@@ -40,12 +42,11 @@ void main()
 
 	printf("===============================================\n");
 	
-	i965();
+
 	keyboard_install();
 	mouse_install();
 	sti();
 	
-	for(;;);
 	printf("===============================================\n");
 	ata_initialize();
 	
@@ -56,30 +57,36 @@ void main()
 	dv_uid = -1;
 	dv_num = 0;
 	
-	printf("===============================================\n");
+	/*printf("===============================================\n");
 	
-	ehci_init();
-	
-	for(;;);
+	ehci_init(); // TODO USB */
 	
 	printf("===============================================\n");
 	
-	printf("Read kernel.bin\n");
+	printf("Reading the kernel.bin\n");
 	
-	FILE *f = fopen("kernel.bin","r");
-	if(!f) {
+	if(!file_sector_count) {
 	
-		printf("error read kernel.bin\n");
-		for(;;);
+		FILE *f = fopen("kernel.bin","r");
+		if(!f) {
+	
+			printf("error read kernel.bin\n");
+			for(;;);
+		}
+	
+		fseek(f,0,SEEK_END);
+		int size = ftell(f);
+		rewind(f);
+		
+		fread ((void*)0x400000, 1, size, f);
+		
+		fclose(f);
+	} else {
+	
+		
+		memcpy((char*)0x400000, (const char*)0x50000, file_sector_count * (16*512) );
+	
 	}
-	
-	fseek(f,0,SEEK_END);
-	int size = ftell(f);
-	rewind(f);
-	
-	fread ((void*)0x400000, 1, size, f);
-	
-	fclose(f);
 	
 	printf("===============================================\n");
 	

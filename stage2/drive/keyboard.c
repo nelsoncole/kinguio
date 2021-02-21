@@ -180,7 +180,7 @@ void keyboard_handler(void)
 			
             	}
 
-		printf("%c",keyboard_charset);
+		//printf("%c",keyboard_charset);
 
         }	
 

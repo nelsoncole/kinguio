@@ -41,9 +41,17 @@ void irq_install(void)
 
 }
 
-
 void default_irq(){
 
+}
+
+extern void ehci_handler();
+
+void irq11_handler()
+{
+	ehci_handler();
+	
+	
 }
 
 // Lista de funções c de entrada ao manipulador de IRQs.
@@ -59,7 +67,7 @@ static void *fnvetors_handler[16] = {
     &default_irq, // 8
     &default_irq, // 9
     &default_irq, // 10
-    &default_irq, // 11
+    &irq11_handler, // 11
     &mouse_handler, // 12
     &default_irq, // 13
     &default_irq, //&ata_irq_handler1, // 14

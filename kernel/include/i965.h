@@ -45,8 +45,8 @@ typedef struct _framebuffer {
 
 
 typedef struct _i965 {
-	unsigned int did, vid;
-	unsigned int mmio_base, memory, iobar;
+	unsigned short did, vid;
+	unsigned long mmio_base, memory, iobar;
 	
 }__attribute__ ((packed)) i965_t;
 
@@ -161,6 +161,8 @@ void disable_legacy_vga_emul(i965_t *driver);
 void timings(i965_t *driver, framebuffer_t fb[2], mode_t *mode);
 
 void gmbus_read(i965_t *driver,unsigned int offset, void *buffer, int size);
+
+int setup_i965();
 
 
 

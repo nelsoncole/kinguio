@@ -5,12 +5,12 @@
 
 struct _gui gui[1];
 
-void initialize_gui(unsigned int pointer)
+void initialize_gui(unsigned long pointer)
 {
-
 	// GUI	
-	gui_t *g = (gui_t*) (pointer + 0x40);
-	memcpy(gui,g,sizeof(gui_t));
+	gui_t *tmp = (gui_t*) ( pointer + 0x40 );
+	
+	memcpy(gui, tmp,sizeof(gui_t));
 	
 	gui->bank_buffer	= 0; // 8MB
 	gui->task_buffer	= 0;
@@ -37,7 +37,7 @@ void initialize_gui(unsigned int pointer)
 
 void put_pixel(long x, long y, unsigned int color)
 {
-	*(unsigned int*)((unsigned int*)gui->virtual_buffer + (gui->pixels_per_scan_line * y) + x) = color;
+	*(unsigned int*)((unsigned int*)(unsigned long)gui->virtual_buffer + (gui->pixels_per_scan_line * y) + x) = color;
 	
 }
 
@@ -54,8 +54,8 @@ void put_pixel_buff(long x, long y, unsigned int color,void *buffer)
 
 void refresh_rate() 
 {
-	unsigned char *dest = ( unsigned char*)gui->virtual_buffer;
-	unsigned char *src  = ( unsigned char*)gui->bank_buffer;
+	unsigned char *dest = ( unsigned char*)((long)gui->virtual_buffer);
+	unsigned char *src  = ( unsigned char*)((long)gui->bank_buffer);
 	
 	memcpy(dest, src,gui->width * (gui->height) * (gui->bpp/8));
 	
@@ -64,7 +64,7 @@ void refresh_rate()
 
 void clears_creen() 
 {
-	memset((unsigned*)gui->virtual_buffer/*G->BankBuffer*/,0,gui->width * (gui->height) * (gui->bpp/8));
+	memset((char*)(unsigned long)gui->virtual_buffer/*G->BankBuffer*/,0,gui->width * (gui->height) * (gui->bpp/8));
 	
 	gui->cursor_x = gui->cursor_y = 0;
 	
@@ -121,7 +121,7 @@ int glyph(int ch)
 	}
 
 	draw_char_transparent(gui->cursor_x*gui->font.x, gui->cursor_y*gui->font.y, ch, gui->font.fg_color,
-	(void *)gui->bank_buffer,&gui->font);
+	(void *)(unsigned long)gui->bank_buffer,&gui->font);
 	
 	gui->cursor_x++;
 	

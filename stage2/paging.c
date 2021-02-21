@@ -24,7 +24,7 @@ void load_pae_page_directory_pointer_table(pae_page_directory_pointer_table_t  *
 
 void load_pml4_table(pml4_table_t *phy_addr)
 {
-	__asm__ __volatile__("mov %0,%%cr3"::"r"(phy_addr));
+	__asm__ __volatile__("movl %0,%%cr3"::"r"(phy_addr));
 }
 
 void enable_pae()
@@ -53,7 +53,7 @@ void page_install(void)
 	unsigned long addr;
 	int i;
 	//PAE PTE
-	memset(pte,0,512*sizeof(pae_page_table_t)*34);
+	memset(pte,0,512*sizeof(pae_page_table_t)*36);
 	
 	//64 MiB
 	addr = 0;
@@ -68,26 +68,26 @@ void page_install(void)
 	}
 	
 	
+	// Linear Frame BUffer 8 MiB
 	addr = (unsigned long)gui->frame_buffer;
-	for(i=0;i < 512 * 2; i++) {
+	for(i=0;i < 512 * 4; i++) {
 		
 		pte->p = 1;
 		pte->rw = 1;
-		pte->us = 1;
+		//pte->us = 1;
 		pte->frames = (addr >>12) &0xfffffffff;
 		pte++;
 		
 		addr += 0x1000;
 	}
-
 	
 	memset(pde,0,512*sizeof(pae_page_directory_t));
 	addr = (unsigned long)pae_pte;
-	for(i=0;i < 34; i++) {
+	for(i=0;i < 36; i++) {
 		
 		pde->p = 1;
 		pde->rw = 1;
-		if(i > 31) pde->us = 1;
+		//if(i > 31) pde->us = 1;
 		pde->phy_addr_pt = (addr >>12) &0xfffffffff;
 		
 		addr +=0x1000;

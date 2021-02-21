@@ -51,7 +51,7 @@ extern struct _gui gui[1];
 
 
 
-void initialize_gui(unsigned int pointer);
+void initialize_gui(unsigned long pointer);
 void put_pixel(long x, long y, unsigned int color);
 void put_pixel_buff(long x, long y, unsigned int color,void *buffer);
 void refresh_rate();

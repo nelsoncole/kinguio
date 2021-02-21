@@ -40,8 +40,13 @@ start:
 
 	mov dword[uid], 0
 
-; Carregar o setup ou stage2
+; Carregar o setup ou stage2.bin
 
+
+	mov word[file_sector_count], 0
+
+	mov di, filename
+	mov word[file_filename],di
 	mov word[filesystem_address],0x1000
 	mov word[file_address_di],0x1000
 	mov word[file_address_bx],0
@@ -58,6 +63,39 @@ start:
 	int 0x16
 	int 0x19
 ._ok:
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+;
+;
+; Carregar o kernel.bin, NOTA: esta solução é provisória.
+;
+;
+	mov word[file_sector_count], 0
+	
+	mov di, filename2
+	mov word[file_filename],di
+	
+	mov word[filesystem_address],0x1000
+	mov word[file_address_di],0x5000
+	mov word[file_address_bx],0
+	
+	mov word[address_offset],0
+	
+	call file_read
+	cmp ax,0
+	je ._ok2
+	mov si, strerror
+	call print
+	
+	xor ax,ax
+	int 0x16
+	int 0x19
+._ok2:
+
+
+;
+;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ; Definir o modo VESA
 	call edid
@@ -85,6 +123,9 @@ start:
 	xor edx,edx
 	mov dl,byte[dv_num]
 	mov ebx,dword[uid]
+	
+	xor ecx,ecx
+	mov cx, word[file_sector_count]
 	
 	jmp dword 0x8:ModoProtegido	; aqui vamos pular do stage1 para o setup
 	
@@ -120,6 +161,7 @@ ModoProtegido:
 	mov eax, 0x11000
 
 	push ebx
+	push ecx
 	push edx
 	push ss
 	push esp

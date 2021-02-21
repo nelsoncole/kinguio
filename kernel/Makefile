@@ -5,12 +5,14 @@ AS=nasm
 CC=gcc
 LD=ld
 
-objs= setup.o main.o string.o gui.o font8x16.o vsprintf.o stdio.o stdlib.o
+objs= setup.o main.o string.o gui.o font8x16.o vsprintf.o stdio.o stdlib.o pci.o gdt.o idt.o vetor.o exception.o paging.o mm.o i965.o
 
-.PHONY: kernel.bin move clean
+.PHONY: kernel.bin
 	
 kernel.bin: $(objs)
 	$(LD) $(LDFLAGS64) -o $@ $^
+	mv *.bin ../bin
+	rm *.o
 
 %.o: %.asm
 	$(AS) $(ASFLAGS64) $< -o $@
@@ -23,8 +25,11 @@ kernel.bin: $(objs)
 
 %.o: gui/%.c
 	$(CC) $(CFLAGS64) -c -o $@ $<
+
+%.o: driver/%.c
+	$(CC) $(CFLAGS64) -c -o $@ $<
+		
+%.o: driver/intel/%.c
+	$(CC) $(CFLAGS64) -c -o $@ $<
 	
-move:
-	mv *.bin ../bin
-clean:
-	rm *.o
+	

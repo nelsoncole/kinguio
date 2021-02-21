@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <data.h>
+directory_entry_t fs_directory[128];
 
 int filename_cmp(const char *s1, const char *s2)
 {
@@ -141,7 +142,7 @@ FILE *open_file_r(directory_entry_t *d,super_block_t *f,part_t *p)
 FILE *open_file(const char *filename, const char *mode)
 {
 
-	super_block_t *f = (super_block_t *)malloc(1024);
+	super_block_t *f = (super_block_t *) malloc(1024);
 	memset(f,0,1024);
 	
 	part_t p[1];
@@ -160,9 +161,7 @@ FILE *open_file(const char *filename, const char *mode)
 		return 0;
 	}
 
-	
-	directory_entry_t d[128];
-	r = read_directory_entry(d,f,p,0,filename);
+	r = read_directory_entry(fs_directory,f,p,0,filename);
 	
 	if(r) {
 	
@@ -171,7 +170,7 @@ FILE *open_file(const char *filename, const char *mode)
 	}
 
 	
-	FILE *fp = open_file_r(d,f,p);
+	FILE *fp = open_file_r(fs_directory,f,p);
 	
 	free(f);
 	return fp;

@@ -4,6 +4,7 @@ LDSVESABASE equ 0x4020
 
 strerror db "BOOTLOADER ERROR, STAGE 1",0
 
+
 dv_num db 0
 uid dd 0
 dap times 16 db 0
@@ -22,7 +23,11 @@ first_sector dd 0
 first_blk dd 0
 address_offset dw 0
 
+file_sector_count dw 0
+file_filename dw 0
 file_address_di dw 0
 file_address_bx dw 0
 filesystem_address dw 0
+
 filename db "stage2.bin                                                                                      ",0 ;96 bytes
+filename2 db "kernel.bin                                                                                      ",0 ;96 bytes

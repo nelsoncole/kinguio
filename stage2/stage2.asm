@@ -17,6 +17,7 @@ start:
 	
 	mov dword[dv_uid],ebx
 	mov byte[dv_num],dl
+	mov dword[file_sector_count],ecx
 	call main
 
 	hlt
@@ -76,8 +77,9 @@ long_mode:
 	
 	ret
 
-	
+global file_sector_count
+file_sector_count dd 0
 
 section .bss
-	resb 0x2000 ;8KiB
+	resb 0x8000 ;32KiB
 _stack:
