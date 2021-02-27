@@ -1,6 +1,9 @@
 #ifndef __PAGING_H
 #define __PAGING_H
 
+#define PAGE_SIZE 		4096
+
+
 //32-bit Paging
 typedef struct _page_table {
 	unsigned int p :1;

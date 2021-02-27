@@ -28,7 +28,7 @@ typedef struct _gui
 	unsigned int	window_background; 
 	
 	
-	//
+	// outros
 	unsigned int 	virtual_buffer;
 	
 	// Extra.area
@@ -61,5 +61,6 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 							struct _font *font);
 int glyph(int ch);
 
+void restauro_de_tela();
 
 #endif

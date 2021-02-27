@@ -1,32 +1,51 @@
+#include <io.h>
 #include <gui.h>
-#include <stdio.h>
 #include <paging.h>
 #include <mm.h>
 #include <driver.h>
 #include <gdt.h>
 #include <idt.h>
 
+#include <apic.h>
 
+#include <cpuid.h>
+
+
+#include <stdio.h>
+#include <string.h>
+
+
+char cpu_name[128];
 void main(unsigned long entry_pointer_info)
 {
 	initialize_gui(entry_pointer_info);
 	
-	printf("run: kernel --> x86_64\n");
+	printf("Run: kernel --> x86_64\n");
 	
 	gdt_install();
 	idt_install();
 	
-	
-	//__asm__ __volatile__("int $1");
-	
 	page_install(entry_pointer_info);
+	initialize_mm_mp();
 	
-	initialize_memory();
+	setup_apic();
+	setup_ioapic();
+	
+	apic_timer_umasked();
+	//ioapic_umasked(2);
+	sti(); 
+	
 	
 	setup_i965();
 	
-	//clears_creen();
+	memset(cpu_name,0,128);
+	cpuid_processor_brand(cpu_name);
 	
-	printf("Done\n");
+	restauro_de_tela();
 	
+	printf("Sirius OS (Kernel mode: AMD64 or x86_64)\nCPU: %s\n",cpu_name);
+	
+	
+	
+	for(;;);
 }

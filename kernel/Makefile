@@ -5,8 +5,9 @@ AS=nasm
 CC=gcc
 LD=ld
 
-objs= setup.o main.o string.o gui.o font8x16.o vsprintf.o stdio.o stdlib.o pci.o gdt.o idt.o vetor.o exception.o paging.o mm.o i965.o
-
+DRIVER = pci.o  i965.o
+LIB = string.o vsprintf.o stdio.o stdlib.o
+objs= setup.o main.o gui.o font8x16.o gdt.o idt.o vetor.o exception.o paging.o mm.o cpuid.o msr.o lvt.o irq.o apic.o $(DRIVER) $(LIB)
 .PHONY: kernel.bin
 	
 kernel.bin: $(objs)

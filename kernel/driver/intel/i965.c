@@ -124,7 +124,7 @@ int setup_i965(){
 	
 	
 	//Mapear o mmio_base e memória de vídeo
-	mm_mp( gtt->mmio_base, &gtt->mmio_base, 0, 0);
+	mm_mp( gtt->mmio_base, &gtt->mmio_base, 0x100000, 0);
 	
 	//for(;;);
 	
@@ -148,11 +148,11 @@ int setup_i965(){
 	// Setup the display timings of your desired mode
 	timings(gtt,fb,mode);
 	
-	gtt->memory = gui->virtual_buffer;
+	mm_mp(gtt->memory, (unsigned long*)&gui->virtual_buffer, 0x800000, 0);
 	
 	for(int y=0;y < mode->height;y++) {
 		for(int x=0;x < mode->width;x++) {
-			*(unsigned int*)((unsigned int*)gtt->memory+x+(mode->width*y)) = 0x0;
+			*(unsigned int*)((unsigned int*)(unsigned long)gui->virtual_buffer+x+(mode->width*y)) = 0x0;
 		}
 	}
 	
@@ -194,7 +194,7 @@ int setup_i965(){
 	
 	gui->cursor_x = gui->cursor_y = 0;
 	
-	//for(int x=0; x < 1000; x++)*(unsigned int*)((unsigned int*)gtt->memory+x+(mode->width*0)) = -1;
+	
 	
 	//printf("Graphic Native Intel,  mode->width %d, mode->height %d\n", mode->width,mode->height);
 	
@@ -230,10 +230,6 @@ void timings(i965_t *driver, framebuffer_t fb[2], mode_t *mode)
 	int y = (edid[5] &0xff) | (edid[7] >> 4 &0xf) << 8;
 	//int sx = (edid[12] &0xff) | (edid[14] >> 4 &0xf) << 8;
 	//int sy = (edid[13] &0xff) | (edid[14] &0xf) << 8;
-	
-	
-	printf("x = %d, y = %d\n",x,y);
-
 
 	for(int i=0;i < 2; i++) {
 	

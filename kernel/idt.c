@@ -1,4 +1,6 @@
 #include <idt.h>
+#include <lvt.h>
+#include <irq.h>
 #include <string.h>
 
 extern void idt_flush(idtr_t*);
@@ -35,8 +37,12 @@ void idt_install(void)
     
 	// 0 - 0x1F
     	exceptions_install();
-	// 0x20 -
-    	//irq_install();
+    	
+    	// 0x20
+    	lvt_install();
+    	
+	// 0x40 -
+    	irq_install();
 
 	idtr->limit = (sizeof(idt_t)*256)-1;
     	idtr->base = (unsigned long)&idt;

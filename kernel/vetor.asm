@@ -1,5 +1,5 @@
 %include "include/inc.asm"
-[bits 64]
+[BITS 64]
 [section .text]
 global isr00,isr01,isr02,isr03,isr04,isr05,isr06,isr07,isr08,isr09
 global isr10,isr11,isr12,isr13,isr14,isr15,isr16,isr17,isr18,isr19
@@ -11,11 +11,7 @@ isr_jmp:
 
 	push gs
 	push fs
-	
-	
-	
-	
-	
+
 	
 	mov ax, 0x10
 	mov gs,ax
@@ -166,3 +162,206 @@ isr31:
 	push qword 0
 	push qword 31
 	jmp isr_jmp
+	
+global lvt0,lvt1,lvt2,lvt3,lvt4
+extern lvt_function
+lvt_jmp:
+	push gs
+	push fs
+
+	
+	mov ax, 0x10
+	mov gs,ax
+	mov fs,ax
+	
+	;PUSH_FPU
+	;PUSH_XMM
+	
+	mov rdi, [rsp+16]
+	call lvt_function
+	
+	;POP_XMM
+	;POP_FPU
+
+	
+	pop fs
+	pop gs
+	
+	
+	add rsp, 16
+	iretq
+	
+lvt0:
+	push qword 0
+	push qword 32
+	jmp lvt_jmp
+
+lvt1:
+	push qword 0
+	push qword 33
+	jmp lvt_jmp
+lvt2:
+	push qword 0
+	push qword 34
+	jmp lvt_jmp
+lvt3:
+	push qword 0
+	push qword 35
+	jmp lvt_jmp
+lvt4:
+	push qword 0
+	push qword 36
+	jmp lvt_jmp
+
+
+
+global irq0,irq1,irq2,irq3,irq4,irq5,irq6,irq7,irq8,irq9
+global irq10,irq11,irq12,irq13,irq14,irq15,irq16,irq17,irq18,irq19
+global irq20,irq21,irq22,irq23
+
+extern irq_function
+irq_jmp:
+	push gs
+	push fs
+
+	
+	mov ax, 0x10
+	mov gs,ax
+	mov fs,ax
+	
+	;PUSH_FPU
+	;PUSH_XMM
+	
+	mov rdi, [rsp+16]
+	call irq_function
+	
+	;POP_XMM
+	;POP_FPU
+
+	
+	pop fs
+	pop gs
+	
+	
+	add rsp, 16
+	iretq
+	
+irq0:
+	push qword 0
+	push qword 64 
+	jmp irq_jmp
+	
+irq1:
+	push qword 0
+	push qword 65 
+	jmp irq_jmp
+
+irq2:
+	push qword 0
+	push qword 66 
+	jmp irq_jmp
+
+irq3:
+	push qword 0
+	push qword 67 
+	jmp irq_jmp
+
+irq4:
+	push qword 0
+	push qword 68 
+	jmp irq_jmp
+	
+irq5:
+	push qword 0
+	push qword 69 
+	jmp irq_jmp
+	
+irq6:
+	push qword 0
+	push qword 70 
+	jmp irq_jmp
+
+irq7:
+	push qword 0
+	push qword 71 
+	jmp irq_jmp
+
+irq8:
+	push qword 0
+	push qword 72 
+	jmp irq_jmp
+
+irq9:
+	push qword 0
+	push qword 73 
+	jmp irq_jmp
+
+irq10:
+	push qword 0
+	push qword 74 
+	jmp irq_jmp
+	
+irq11:
+	push qword 0
+	push qword 75 
+	jmp irq_jmp
+
+irq12:
+	push qword 0
+	push qword 76 
+	jmp irq_jmp
+
+irq13:
+	push qword 0
+	push qword 77
+	jmp irq_jmp
+
+irq14:
+	push qword 0
+	push qword 78
+	jmp irq_jmp
+	
+irq15:
+	push qword 0
+	push qword 79 
+	jmp irq_jmp
+	
+irq16:
+	push qword 0
+	push qword 80 
+	jmp irq_jmp
+
+irq17:
+	push qword 0
+	push qword 81 
+	jmp irq_jmp
+
+irq18:
+	push qword 0
+	push qword 82 
+	jmp irq_jmp
+
+irq19:
+	push qword 0
+	push qword 83 
+	jmp irq_jmp
+
+irq20:
+	push qword 0
+	push qword 84 
+	jmp irq_jmp
+	
+irq21:
+	push qword 0
+	push qword 85 
+	jmp irq_jmp
+
+irq22:
+	push qword 0
+	push qword 86 
+	jmp irq_jmp
+
+irq23:
+	push qword 0
+	push qword 87 
+	jmp irq_jmp
