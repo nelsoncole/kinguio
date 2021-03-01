@@ -270,7 +270,7 @@ Script de ligação e mapa de memória
                 0x00000000004068bd                gmbus_write
  .text          0x00000000004068ee      0x97c acpi.o
                 0x0000000000406ec0                setup_acpi
-                0x0000000000407187                poweroff
+                0x0000000000407197                poweroff
  .text          0x000000000040726a      0x1fb string.o
                 0x000000000040726a                memset
                 0x00000000004072b1                memcpy

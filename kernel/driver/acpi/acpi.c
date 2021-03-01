@@ -273,7 +273,7 @@ void setup_acpi()
         	printf("DSDT nao encontrado\n");
         }
  	 
-    	//acpi_enable();   
+    	acpi_enable();   
     	
     	poweroff(100000000);	
 }
@@ -281,7 +281,7 @@ void setup_acpi()
 // Credito: kaworu (https://forum.osdev.org/viewtopic.php?t=16990)
 void poweroff(unsigned int timeout) {
 
-   	acpi_enable();
+   	//acpi_enable();
    	
    	wait(timeout);
 
