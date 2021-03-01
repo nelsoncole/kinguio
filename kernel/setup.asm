@@ -12,7 +12,8 @@ start:
 	mov edi,ebx
 	call main
 	
-	hlt
+L1:	hlt
+	jmp L1
 
 global gdt_flush
 gdt_flush:

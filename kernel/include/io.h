@@ -62,8 +62,7 @@ __asm__ __volatile__(\
 #define hlt() __asm__ __volatile__ ("hlt")
 #define nop() __asm__ __volatile__ ("nop")
 
-
-//void wait(int n);
+void wait(unsigned int n);
 
 
 #endif

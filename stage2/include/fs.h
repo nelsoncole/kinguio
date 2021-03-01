@@ -21,7 +21,7 @@ typedef struct _super_block {
 	unsigned int 	hidden;		// 20 - 23
 	unsigned int 	rsv;			// 24 - 27
 	unsigned int 	byte_per_sector;	// 28 - 31
-	unsigned int 	sector_por_blk;	// 32 - 35
+	unsigned int 	sector_per_blk;	// 32 - 35
 	unsigned int 	num_of_blk;		// 36 - 39
 	unsigned int 	size_of_fat;		// 40 - 43
 	unsigned int 	root_blk;		// 44 - 47

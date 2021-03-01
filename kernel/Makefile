@@ -5,9 +5,9 @@ AS=nasm
 CC=gcc
 LD=ld
 
-DRIVER = pci.o  i965.o
+DRIVER = pci.o  i965.o acpi.o
 LIB = string.o vsprintf.o stdio.o stdlib.o
-objs= setup.o main.o gui.o font8x16.o gdt.o idt.o vetor.o exception.o paging.o mm.o cpuid.o msr.o lvt.o irq.o apic.o $(DRIVER) $(LIB)
+objs= setup.o main.o gui.o io.o font8x16.o gdt.o idt.o vetor.o exception.o paging.o mm.o cpuid.o msr.o lvt.o irq.o apic.o $(DRIVER) $(LIB)
 .PHONY: kernel.bin
 	
 kernel.bin: $(objs)
@@ -31,6 +31,9 @@ kernel.bin: $(objs)
 	$(CC) $(CFLAGS64) -c -o $@ $<
 		
 %.o: driver/intel/%.c
+	$(CC) $(CFLAGS64) -c -o $@ $<
+	
+%.o: driver/acpi/%.c
 	$(CC) $(CFLAGS64) -c -o $@ $<
 	
 	

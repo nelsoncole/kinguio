@@ -46,13 +46,13 @@ int read_directory_entry(directory_entry_t *d,super_block_t *f,part_t *p,int typ
 	unsigned int data_sector = f->rsv + f->hidden;
 	
 	// calcule o first_sector
-	unsigned int first_sector = (f->root_blk * f->sector_por_blk) + data_sector;
+	unsigned int first_sector = (f->root_blk * f->sector_per_blk) + data_sector;
 	
 	// ler o primeiro bloco do directorio raiz 8KiB em geral.
 	char *root = (char*)malloc(8192);
 	memset(root,0,8192);
 	
-	int r = read_sector(p->dv_num, f->sector_por_blk, first_sector,root);
+	int r = read_sector(p->dv_num, f->sector_per_blk, first_sector,root);
 	
 	// Pesquizar em todos os blocos
 	int i;
@@ -81,7 +81,7 @@ FILE *open_file_r(directory_entry_t *d,super_block_t *f,part_t *p)
 	fp->buffer 	= (unsigned char*)malloc(BUFSIZ);
 	fp->fsize	= d->file_size;
 	fp->byte_per_sector = f->byte_per_sector;
-	fp->count	= f->sector_por_blk;
+	fp->count	= f->sector_per_blk;
 	
 	fp->dv_num	= p->dv_num;
 	
@@ -101,7 +101,7 @@ FILE *open_file_r(directory_entry_t *d,super_block_t *f,part_t *p)
 		memset(blocks,0,4096);
 
 		for(t=0;t<1024;t++) {
-			blocks[t] = (index*f->sector_por_blk) + f->rsv + f->hidden;
+			blocks[t] = (index*f->sector_per_blk) + f->rsv + f->hidden;
 			fp->num_of_blocks++;
 			
 			// verifique eof

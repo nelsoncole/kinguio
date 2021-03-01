@@ -9,7 +9,7 @@ typedef struct _super_block {
 	unsigned int hidden;			// 20 - 23
 	unsigned int reserved;			// 24 - 27
 	unsigned int byte_per_sector;		// 28 - 31
-	unsigned int sector_por_blk;		// 32 - 35
+	unsigned int sector_per_blk;		// 32 - 35
 	unsigned int num_of_blk;		// 36 - 39
 	unsigned int size_of_blk;		// 40 - 43
 	unsigned int root_blk;			// 44 - 47
@@ -76,16 +76,16 @@ unsigned int size_of_blk(super_block *fs)
 {
 	
 	unsigned int n = (((fs->total_num_of_sector - \
-	fs->reserved)/fs->sector_por_blk)*4)/(fs->byte_per_sector * fs->sector_por_blk);
+	fs->reserved)/fs->sector_per_blk)*4)/(fs->byte_per_sector * fs->sector_per_blk);
 	
 	if( ( (((fs->total_num_of_sector - \
-	fs->reserved)/fs->sector_por_blk)*4)%(fs->byte_per_sector * fs->sector_por_blk) ) ) n += 1;
+	fs->reserved)/fs->sector_per_blk)*4)%(fs->byte_per_sector * fs->sector_per_blk) ) ) n += 1;
 	return (n);
 }
 
 unsigned int num_of_blk(super_block *fs)
 {
-	return( (fs->total_num_of_sector - fs->reserved)/fs->sector_por_blk );
+	return( (fs->total_num_of_sector - fs->reserved)/fs->sector_per_blk );
 }
 
 
@@ -115,10 +115,10 @@ void clean_blk_enter(unsigned int blk,FILE *fd,super_block *fs)
 {
 	unsigned int data = 0;
 	unsigned int data_sector =  fs->reserved;
-      	unsigned int first_sector = data_sector + (blk * fs->sector_por_blk);
+      	unsigned int first_sector = data_sector + (blk * fs->sector_per_blk);
       	unsigned int off = first_sector * fs->byte_per_sector;
       	
-      	int i, n = (fs->byte_per_sector * fs->sector_por_blk)/4;
+      	int i, n = (fs->byte_per_sector * fs->sector_per_blk)/4;
       	
 	fseek (fd, off, SEEK_SET );
 	for(i=0 ;i < n;i++) fwrite(&data,1,4,fd);
@@ -144,12 +144,12 @@ void root_dir(FILE *fd,super_block *fs)
 	
 	
 	//clear directory
-	off = (fs->reserved*fs->byte_per_sector) + (fs->sector_por_blk*fs->byte_per_sector*fs->root_blk);
+	off = (fs->reserved*fs->byte_per_sector) + (fs->sector_per_blk*fs->byte_per_sector*fs->root_blk);
 	
 	fseek (fd, off, SEEK_SET );
 	
 	data = 0;
-	for(i=0; i < (fs->sector_por_blk*fs->byte_per_sector/4);i++){
+	for(i=0; i < (fs->sector_per_blk*fs->byte_per_sector/4);i++){
 		
 		fwrite(&data,1,4,fd);
 	}
@@ -259,7 +259,7 @@ int create_file(const char *path,FILE *fd,super_block *fs,directory_entry *direc
       	
       	
       	unsigned int data_sector =  fs->reserved;
-      	unsigned int root_sector = data_sector + (fs->root_blk * fs->sector_por_blk);
+      	unsigned int root_sector = data_sector + (fs->root_blk * fs->sector_per_blk);
 	
 	
 	
@@ -315,10 +315,10 @@ void copy(FILE *fd,super_block *fs,directory_entry *directory, const char *path)
 	
 	
 	unsigned int data_sector =  fs->reserved;
-      	unsigned int first_sector = data_sector + (directory->blk * fs->sector_por_blk);
-      	unsigned int root_sector = data_sector + (fs->root_blk * fs->sector_por_blk);
+      	unsigned int first_sector = data_sector + (directory->blk * fs->sector_per_blk);
+      	unsigned int root_sector = data_sector + (fs->root_blk * fs->sector_per_blk);
       	unsigned int off;
-      	unsigned int size_blk = fs->sector_por_blk * fs->byte_per_sector;
+      	unsigned int size_blk = fs->sector_per_blk * fs->byte_per_sector;
       	
       	
       	// gravar directory, tamanho em bytes
@@ -353,7 +353,7 @@ void copy(FILE *fd,super_block *fs,directory_entry *directory, const char *path)
 			n++; 
 			
 			// new offset
-			first_sector = data_sector + (new_blk* fs->sector_por_blk);
+			first_sector = data_sector + (new_blk* fs->sector_per_blk);
 			off = first_sector * fs->byte_per_sector;
 			fseek (fd, off, SEEK_SET );
 			
@@ -455,7 +455,7 @@ int main(int argc, char **argv) {
 	
 	fs.reserved = 2;
 	fs.byte_per_sector = 512;
-	fs.sector_por_blk = 16;
+	fs.sector_per_blk = 16;
 	
 	fseek (fd1, 0, SEEK_END );
 	disk_size = ftell(fd1);

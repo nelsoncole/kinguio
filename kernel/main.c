@@ -10,6 +10,8 @@
 
 #include <cpuid.h>
 
+#include <acpi.h>
+
 
 #include <stdio.h>
 #include <string.h>
@@ -33,7 +35,8 @@ void main(unsigned long entry_pointer_info)
 	
 	apic_timer_umasked();
 	//ioapic_umasked(2);
-	sti(); 
+	sti();
+	 
 	
 	
 	setup_i965();
@@ -43,9 +46,9 @@ void main(unsigned long entry_pointer_info)
 	
 	restauro_de_tela();
 	
+	
 	printf("Sirius OS (Kernel mode: AMD64 or x86_64)\nCPU: %s\n",cpu_name);
 	
+	setup_acpi();
 	
-	
-	for(;;);
 }
