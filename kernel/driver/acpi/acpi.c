@@ -11,6 +11,7 @@ RSDT *rsdt;
 XSDT *xsdt;
 FADT *fadt;
 DSDT *dsdt;
+HPET *hpet;
 
 
 unsigned short SLP_TYPa;
@@ -52,16 +53,14 @@ static int init_rsdp(unsigned long ptr)
 	signature[8] = 0;
 	oem[6] = 0;
 	
-	printf("%s encontrada, OEM ID \"%s\"\n",signature,oem);
-	
 	// TODO: Aqui mapeamos possiveis endereços ACPI
 	acpi_physical_init = rsdp->rsdt_addr &0xFFF00000;
 	
-	mm_mp(acpi_physical_init, &acpi_virtual_addr, 0x200000 /*2MiB*/, 0);
+	mm_mp(acpi_physical_init, &acpi_virtual_addr, 0x400000 /*4MiB*/, 0);
 	
 	if(rsdp->revision == 0x2){
 	
-		printf("The ACPI version 2.0\n");
+		printf("ACPI version 2.0, ");
 		
 	
 		rsdt = (RSDT*) acpi_set_virtual_addr(rsdp->rsdt_addr);
@@ -70,12 +69,16 @@ static int init_rsdp(unsigned long ptr)
 	
 	}else if(rsdp->revision == 0) {
 	
-		printf("The ACPI version 1.0\n");
+		printf("ACPI version 1.0, ");
 		
 		rsdt = (RSDT*) acpi_set_virtual_addr(rsdp->rsdt_addr);
 		
+		xsdt = (XSDT*) 0;
+		
 	
 	}
+	
+	printf("OEM_ID \"%s\"\n",oem);
 	
 	return 0;
 }
@@ -91,6 +94,27 @@ static int acpi_check_header(unsigned int *ptr, char *sig)
    		
    	return -1;
 }
+
+unsigned long acpi_probe(RSDT *_rsdt, XSDT *_xsdt, char *signature)
+{
+
+	unsigned long ptr = (unsigned long)&rsdt->entry;
+	unsigned int *array = (unsigned int*) ptr;
+	
+	int len =  rsdt->length - 36;
+	
+     	for(int i = 0; i < len; i++) {
+	
+		ptr = acpi_set_virtual_addr(*array++);
+        		
+        	if(acpi_check_header((unsigned int*) ptr, signature) == 0)
+        		return ptr;
+        		
+        }
+
+	return 0;
+}
+
 
 static int acpi_enable(void)
 {
@@ -160,10 +184,10 @@ static unsigned long acip_init() {
 
 	// // search below the 1mb mark for RSDP signature
 	unsigned long ptr = 0x000E0000;
-	unsigned long end = 0x000FFFFF;
+	unsigned long end = ptr + 0x100000;
 	
 	unsigned int ebda = (unsigned int) (*(unsigned short *) EBDA);
-	ebda = ebda*0x10 &0x000FFFFF;  // convert segment em linear address
+	ebda = ebda << 4;  // convert segment em linear address
 	
 
     	while ( ptr  < end ) {
@@ -192,7 +216,7 @@ static unsigned long acip_init() {
             		return ptr;
         	}
         	
-        	ptr  += 16/ 4;
+        	ptr  += 16;
    	
    	}
    	
@@ -200,8 +224,11 @@ static unsigned long acip_init() {
 	return 0;
 }
 
+
 void setup_acpi()
 {
+
+	printf("ACPI_Setup ... \\\\ \n");
 
 	unsigned long ptr = acip_init();
    	if(ptr){
@@ -209,22 +236,9 @@ void setup_acpi()
    		// call RSDP
         	init_rsdp( ptr);
         	
-        
-        	for(int i=0; i < rsdt->length; i++) {
-        	
-        		// virtual address
-        		ptr = acpi_set_virtual_addr(rsdt->entry + 4*i);
-        		
-        		if(acpi_check_header((unsigned int*) ptr, "FACP") == 0)
-        		{
-        			fadt = (FADT*) ptr;
-        			break;
-        		}
-        	}
-        	
-        	
-        	
-        	
+        	// call FADT
+        	fadt = (FADT*) acpi_probe(rsdt, xsdt, "FACP");
+      
         	
     	}else {
     	
@@ -246,7 +260,6 @@ void setup_acpi()
               		
               		if(memcmp(aml_code, "_S5_", 4) == 0){
               		
-              			
               			aml_code += 5;
                      		aml_code += ((*aml_code &0xC0)>>6) +2;   // calcular PkgLength size
               			
@@ -272,16 +285,13 @@ void setup_acpi()
         
         	printf("DSDT nao encontrado\n");
         }
- 	 
-    	acpi_enable();   
-    	
-    	poweroff(100000000);	
+ 	   
+ 	acpi_enable();
+ 	
 }
 
 // Credito: kaworu (https://forum.osdev.org/viewtopic.php?t=16990)
 void poweroff(unsigned int timeout) {
-
-   	//acpi_enable();
    	
    	wait(timeout);
 

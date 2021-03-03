@@ -264,7 +264,7 @@ int setup_ioapic()
 	unsigned long io_apic_base_addr;
 
 	// Mapear o IO APIC BASE
-	mm_mp( IO_APIC_BASE, &io_apic_base_addr,0x1000/*4KiB*/,0);
+	mm_mp( IO_APIC_BASE, &io_apic_base_addr, 0x1000/*4KiB*/,0);
 
 	ioapic_base =  io_apic_base_addr;
 

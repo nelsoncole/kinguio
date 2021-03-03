@@ -5,7 +5,7 @@ AS=nasm
 CC=gcc
 LD=ld
 
-DRIVER = pci.o  i965.o acpi.o
+DRIVER = pci.o  i965.o acpi.o hpet.o lpc.o
 LIB = string.o vsprintf.o stdio.o stdlib.o
 objs= setup.o main.o gui.o io.o font8x16.o gdt.o idt.o vetor.o exception.o paging.o mm.o cpuid.o msr.o lvt.o irq.o apic.o $(DRIVER) $(LIB)
 .PHONY: kernel.bin

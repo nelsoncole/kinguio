@@ -5,13 +5,9 @@
 
 struct _gui gui[1];
 
-char _bb[4096];
-char *bb;
 
 void initialize_gui(unsigned long pointer)
 {
-	bb = _bb;
-	memset(bb,0,4096);
 	// GUI	
 	gui_t *tmp = (gui_t*) ( pointer + 0x40 );
 	
@@ -106,8 +102,6 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 int glyph(int ch)
 {
 
-	*bb++ = ch &0xff;
-
 	if(ch == '\n') {
 	
 		gui->cursor_x = 0;
@@ -133,9 +127,4 @@ int glyph(int ch)
 	gui->cursor_x++;
 	
 	return ch;
-}
-
-void restauro_de_tela()
-{
-	printf("%s",_bb);
 }

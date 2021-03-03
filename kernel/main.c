@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <string.h>
 
-
+extern void setup_hpet();
 char cpu_name[128];
 void main(unsigned long entry_pointer_info)
 {
@@ -44,11 +44,13 @@ void main(unsigned long entry_pointer_info)
 	memset(cpu_name,0,128);
 	cpuid_processor_brand(cpu_name);
 	
-	restauro_de_tela();
 	
 	
 	printf("Sirius OS (Kernel mode: AMD64 or x86_64)\nCPU: %s\n",cpu_name);
 	
 	setup_acpi();
+	setup_hpet();
+	//poweroff(100000000);	
+	
 	
 }
