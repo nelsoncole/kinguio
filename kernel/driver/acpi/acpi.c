@@ -2,16 +2,18 @@
 #include <io.h>
 #include <mm.h>
 
+#include <sleep.h>
+
 #include <stdio.h>
 #include <string.h>
 
 
-RSDP *rsdp;
-RSDT *rsdt;
-XSDT *xsdt;
-FADT *fadt;
-DSDT *dsdt;
-HPET *hpet;
+ACPI_TABLE_RSDP *rsdp;
+ACPI_TABLE_RSDT *rsdt;
+ACPI_TABLE_XSDT *xsdt;
+ACPI_TABLE_FADT *fadt;
+ACPI_TABLE_DSDT *dsdt;
+ACPI_TABLE_HPET *hpet;
 
 
 unsigned short SLP_TYPa;
@@ -29,7 +31,7 @@ static unsigned long acpi_set_virtual_addr(unsigned long phy_addr) {
 static int init_rsdp(unsigned long ptr)
 {	
 
-	rsdp = (RSDP*) ptr;
+	rsdp = (ACPI_TABLE_RSDP*) ptr;
 	
 	char checksum = 0;
 	
@@ -63,17 +65,17 @@ static int init_rsdp(unsigned long ptr)
 		printf("ACPI version 2.0, ");
 		
 	
-		rsdt = (RSDT*) acpi_set_virtual_addr(rsdp->rsdt_addr);
-		xsdt = (XSDT*) acpi_set_virtual_addr(rsdp->xsdt_addr);
+		rsdt = (ACPI_TABLE_RSDT*) acpi_set_virtual_addr(rsdp->rsdt_addr);
+		xsdt = (ACPI_TABLE_XSDT*) acpi_set_virtual_addr(rsdp->xsdt_addr);
 		
 	
 	}else if(rsdp->revision == 0) {
 	
 		printf("ACPI version 1.0, ");
 		
-		rsdt = (RSDT*) acpi_set_virtual_addr(rsdp->rsdt_addr);
+		rsdt = (ACPI_TABLE_RSDT*) acpi_set_virtual_addr(rsdp->rsdt_addr);
 		
-		xsdt = (XSDT*) 0;
+		xsdt = (ACPI_TABLE_XSDT*) 0;
 		
 	
 	}
@@ -95,7 +97,7 @@ static int acpi_check_header(unsigned int *ptr, char *sig)
    	return -1;
 }
 
-unsigned long acpi_probe(RSDT *_rsdt, XSDT *_xsdt, char *signature)
+unsigned long acpi_probe(ACPI_TABLE_RSDT *_rsdt, ACPI_TABLE_XSDT *_xsdt, char *signature)
 {
 
 	unsigned long ptr = (unsigned long)&rsdt->entry;
@@ -103,13 +105,12 @@ unsigned long acpi_probe(RSDT *_rsdt, XSDT *_xsdt, char *signature)
 	
 	int len =  rsdt->length - 36;
 	
-     	for(int i = 0; i < len; i++) {
+     	for(int i = 0; i < len; i +=4) {
 	
 		ptr = acpi_set_virtual_addr(*array++);
         		
         	if(acpi_check_header((unsigned int*) ptr, signature) == 0)
         		return ptr;
-        		
         }
 
 	return 0;
@@ -237,7 +238,7 @@ void setup_acpi()
         	init_rsdp( ptr);
         	
         	// call FADT
-        	fadt = (FADT*) acpi_probe(rsdt, xsdt, "FACP");
+        	fadt = (ACPI_TABLE_FADT*) acpi_probe(rsdt, xsdt, "FACP");
       
         	
     	}else {
@@ -247,7 +248,7 @@ void setup_acpi()
     	}   	
    	
    	ptr = acpi_set_virtual_addr(fadt->DSDT);
- 	dsdt = (DSDT*) ptr;
+ 	dsdt = (ACPI_TABLE_DSDT*) ptr;
  	
  	if(acpi_check_header((unsigned int*) ptr, "DSDT") == 0)
         {	
@@ -293,7 +294,7 @@ void setup_acpi()
 // Credito: kaworu (https://forum.osdev.org/viewtopic.php?t=16990)
 void poweroff(unsigned int timeout) {
    	
-   	wait(timeout);
+   	sleep(timeout);
 
    	// enviar o comando shutdown
    	outportw(fadt->PM1a_CNT_BLK, SLP_TYPa | 1<<13 );

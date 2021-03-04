@@ -43,8 +43,8 @@ void main()
 	printf("===============================================\n");
 	
 
-	keyboard_install();
-	mouse_install();
+	//keyboard_install();
+	//mouse_install();
 	sti();
 	
 	printf("===============================================\n");

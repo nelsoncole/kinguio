@@ -35,6 +35,23 @@ void initialize_gui(unsigned long pointer)
 
 }
 
+void update_gui(unsigned long memory, int width, int height )
+{
+	gui->horizontal_resolution 	= width;
+	gui->vertical_resolution 	= height;
+	gui->pixels_per_scan_line	= gui->horizontal_resolution;
+	
+	
+	gui->x 	= 0;
+	gui->y 	= 0;
+	gui->width 	= gui->horizontal_resolution;
+	gui->height 	= gui->vertical_resolution;
+	
+	
+	gui->cursor_x = gui->cursor_y = 0;
+	gui->virtual_buffer = memory;
+}
+
 
 void put_pixel(long x, long y, unsigned int color)
 {
@@ -80,6 +97,12 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 	const unsigned short *font_data = (unsigned short*) font->buf;
    	int cx, cy;
 	unsigned short mask;
+	unsigned int color = fg_color;
+	
+	if(ch == '\b') { 
+	
+		color = 0;
+	}
     
    	for(cy=0;cy < font->y ;cy++){
 		mask = 1;
@@ -88,7 +111,7 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
                 for(cx = font->x -1 ;cx >= 0;cx--){ 
                        if(f&mask){
 				//put_pixel_buff(x + cx,y + cy,fg_color,buffer);
-				put_pixel(x + cx,y + cy,fg_color);
+				put_pixel(x + cx,y + cy, color);
 			}
 			mask += mask;
                   
@@ -99,8 +122,7 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 }
 
 
-int glyph(int ch)
-{
+int glyph(int ch) {
 
 	if(ch == '\n') {
 	
@@ -121,10 +143,21 @@ int glyph(int ch)
 		gui->cursor_y++;
 	}
 
+
+	if(ch == '\b') {
+	
+		if(gui->cursor_x > 0)gui->cursor_x--;
+		else if(gui->cursor_y > 0){
+			gui->cursor_y--;
+			gui->cursor_x = gui->width - 1;
+		}
+	
+	}	
+
 	draw_char_transparent(gui->cursor_x*gui->font.x, gui->cursor_y*gui->font.y, ch, gui->font.fg_color,
 	(void *)(unsigned long)gui->bank_buffer,&gui->font);
 	
-	gui->cursor_x++;
+	if(ch != '\b') gui->cursor_x++;
 	
 	return ch;
 }

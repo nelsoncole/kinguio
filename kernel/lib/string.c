@@ -50,6 +50,19 @@ size_t strlen(const char *s)
 	return (size_t)(tmp - s);
 }
 
+int strcmp (const char* s1, const char* s2)
+{
+
+	const char *_s1 = s1;
+	const char *_s2 = s2;
+
+    	while((*_s1++ == *_s2++))
+    	if((*_s1 == *_s2) && (*_s1 + *_s2 == 0))
+    	return 0;
+
+
+    	return -1;
+}
 
 int memcmp(char *s1, char *s2, int n)
 {
@@ -61,3 +74,5 @@ int memcmp(char *s1, char *s2, int n)
    }
    return 0;
 }
+
+

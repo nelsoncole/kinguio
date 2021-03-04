@@ -34,6 +34,13 @@ idt_flush:
     	lidt [rax]
 
     	ret
+    	
+global call_function
+call_function:
+   	mov rax, rdi
+   	mov rdi, rsi
+    	call rax
+    	ret
 	
 section .bss
 	resb 0x8000 ;32KiB

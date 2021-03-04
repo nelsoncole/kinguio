@@ -16,84 +16,53 @@ extern void irq8();	extern void irq18();
 extern void irq9();	extern void irq19();
 
 
-void irq_function(int n){
+void default_irq(int n){
 
+	printf("Null IRQ n: %d\n",n); 
+}
+
+// Lista de funções c de entrada ao manipulador de IRQs.
+void *fnvetors_handler[24] = {
+    &default_irq, // 0
+    &default_irq, // 1
+    &default_irq, // 2
+    &default_irq, // 3
+    &default_irq, // 4
+    &default_irq, // 5
+    &default_irq, // 6
+    &default_irq, // 7
+    &default_irq, // 8
+    &default_irq, // 9
+    &default_irq, // 10
+    &default_irq, // 11
+    &default_irq, // 12
+    &default_irq, // 13
+    &default_irq, // 14
+    &default_irq, // 15
+    &default_irq, // 16
+    &default_irq, // 17
+    &default_irq, // 18
+    &default_irq, // 19
+    &default_irq, // 20
+    &default_irq, // 21
+    &default_irq, // 22
+    &default_irq, // 23
+};
+
+extern void call_function(void *, int);
+void irq_function(unsigned int n){
+
+	n -= 0x40;
+
+    	if(n < 24){
+    	
+    	void *addr = fnvetors_handler[n];
+    	// Chamda de função correspondente
+    	call_function(addr, n);
+
+    	}else printf("Erro IRQ%d", n);
+	
 	apic_eoi_register();
-	switch(n - 0x40){
-		
-		case 0: printf("Null IRQ n: %d\n",n - 0x40); 
-
-			break;
-		case 1: printf("Null IRQ n: %d\n",n - 0x40);
-			break;
-		case 2: printf("Null IRQ n: %d\n",n - 0x40);
-			
-			break;
-		case 3: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 4: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 5: printf("Null IRQ n: %d\n",n - 0x40);
- 
-			break;
-		case 6: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 7: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 8: printf("Null IRQ n: %d\n",n - 0x40);
-			break;
-		case 9: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 10: printf("Null IRQ n: %d\n",n - 0x40); 
-			
-			break;
-		case 11: printf("Null IRQ n: %d\n",n - 0x40);
- 	
-			break;
-		case 12: printf("Null IRQ n: %d\n",n - 0x40);
-			break;
-		case 13: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 14: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 15: printf("Null IRQ n: %d\n",n - 0x40);
- 
-			break;
-		case 16: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 17: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 18: printf("Null IRQ n: %d\n",n - 0x40);
- 
-			break;
-		case 19: printf("Null IRQ n: %d\n",n - 0x40);
-
-			break;
-		case 20: printf("Null IRQ n: %d\n",n - 0x40);
-			
-			break;
-		case 21: printf("Null IRQ n: %d\n",n - 0x40);
- 
-			break;
-		case 22: printf("Null IRQ n: %d\n",n - 0x40);
- 
-			break;
-		case 23: printf("Null IRQ n: %d\n",n - 0x40);
-			break;
-		
-		default:
-			printf("Default IRQ n: %d\n",n - 0x40);
-		break;
-	}
 	
 }
 

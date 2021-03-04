@@ -4,65 +4,10 @@
 #include <gui.h>
 #include <string.h>
 #include <mm.h>
+#include <sleep.h>
 
 
 i965_t gtt[1];
-
-
-unsigned int cursor18x18[18] = {
-
-	0b100000000000000000,
-	0b110000000000000000,
-	0b111000000000000000,
-	0b111100000000000000,
-	0b110110000000000000,
-	0b110011000000000000,
-	0b110001100000000000,
-	0b110000110000000000,
-	0b110000011000000000,
-	0b110000001100000000,
-	0b110000000110000000,
-	0b110000000011000000,
-	0b110000000001100000,
-	0b110000000000110000,
-	0b111110000011111000,
-	0b100011000011000000,
-	0b000000110011000000,
-	0b000000011110000000,
-
-
-};
-
-
-void DrawMouse(unsigned int color, unsigned int *buffer,void *MouseBuffer)
-{
-	unsigned int font = 0;
-	const unsigned int *font_data = (const unsigned int*) MouseBuffer;
-	unsigned int mask;
-	unsigned int *u;
-	
-	for(int t=0;t < 18;t++) {
-	
-		u = (unsigned int *) buffer + 64*t;
-		
-		mask = 1;
-        	font = font_data[t];
-		
-		for(int i= 18 -1 ;i >= 0;i--)
-		{
-			
-                     if(font&mask) {
-                       	u[i] = color;
-                     }
-                       
-			mask += mask;
-	
-		}
-			
-		
-	} 	
-
-}
 
 int i965_pci_init(int bus, int dev, int fun)
 {	
@@ -83,13 +28,13 @@ int i965_pci_init(int bus, int dev, int fun)
 	
 #if defined(__x86_64__) || defined(__aarch64__)
 
-	gtt->mmio_base =  (bar1 << 32 | bar0) &0xFFFFFFFFFFFFFFF0;
-	gtt->memory = (bar3 << 32 | bar2) &0xFFFFFFFFFFFFFFF0;
+	gtt->phy_mmio =  (bar1 << 32 | bar0) &0xFFFFFFFFFFFFFFF0;
+	gtt->phy_memory = (bar3 << 32 | bar2) &0xFFFFFFFFFFFFFFF0;
 	gtt->iobar = bar4 &0x00000000FFFFFFF0;		
 #elif defined(__i386__) || defined(__arm__)
 	
-	gtt->mmio_base = bar0 &0xFFFFFFF0;
-	gtt->memory = bar2 &0xFFFFFFF0;
+	gtt->phy_mmio = bar0 &0xFFFFFFF0;
+	gtt->phy_memory = bar2 &0xFFFFFFF0;
 	gtt->iobar = bar4 &0xFFFFFFF0;
 #else
 #error YOUR ARCH HERE
@@ -124,10 +69,7 @@ int setup_i965(){
 	
 	
 	//Mapear o mmio_base e memória de vídeo
-	mm_mp( gtt->mmio_base, &gtt->mmio_base, 0x100000, 0);
-	
-	//for(;;);
-	
+	mm_mp( gtt->phy_mmio, &gtt->mmio_base, 0x100000, 0);
 	
 	/*char edid[128];
 	
@@ -148,11 +90,13 @@ int setup_i965(){
 	// Setup the display timings of your desired mode
 	timings(gtt,fb,mode);
 	
-	mm_mp(gtt->memory, (unsigned long*)&gui->virtual_buffer, 0x800000, 0);
+	mm_mp(gtt->phy_memory, (unsigned long*)&gtt->memory, 0x1000000/*16MiB*/, 0);
+	
+	gtt->cursor_memory = gtt->memory + 0x800000;
 	
 	for(int y=0;y < mode->height;y++) {
 		for(int x=0;x < mode->width;x++) {
-			*(unsigned int*)((unsigned int*)(unsigned long)gui->virtual_buffer+x+(mode->width*y)) = 0x0;
+			*(unsigned int*)((unsigned int*)gtt->memory+x+(mode->width*y)) = 0x0;
 		}
 	}
 	
@@ -170,54 +114,25 @@ int setup_i965(){
 	
 	
 	
-	//Nelson, quanto tempo eu devo esperar aqui?
-	for(int i=0; i <100000;i++)outanyb(0x80);
+	
+	//Nelson, espere 1s
+	sti();
+	sleep(1000);
+	cli();
 
 
 	enable_plane(gtt);
-	
 	enable_dac(gtt);
 	
-
 	
+	setup_cursor(gtt);
 	
-	gui->horizontal_resolution = mode->width;
-	gui->vertical_resolution = mode->height;
-	gui->pixels_per_scan_line	= gui->horizontal_resolution;
-	
-	
-	gui->x 	= 0;
-	gui->y 	= 0;
-	gui->width 	= gui->horizontal_resolution;
-	gui->height 	= gui->vertical_resolution;
-	
-	
-	gui->cursor_x = gui->cursor_y = 0;
-	
+	// fim
+	update_gui(gtt->memory, mode->width, mode->height );
 	
 	
 	//printf("Graphic Native Intel,  mode->width %d, mode->height %d\n", mode->width,mode->height);
 	
-	
-	
-	/*for(int i=0; i < 64*64; i++) {
-	
-		*(unsigned int*)(0x500000 + gtt->memory + i*4) = 0;
-	
-	}
-	
-	
-	DrawMouse(-1, (unsigned int *)(0x500000 + gtt->memory),cursor18x18);
-	
-	
-	
-	*(unsigned int*)(gtt->mmio_base + 0x70080) = 0x7;
-	
-	*(unsigned int*)(gtt->mmio_base + 0x70088) = 0x01000200;
-	
-	*(unsigned int*)(gtt->mmio_base + 0x70084) = 0x500000;
-
-*/
 	return 0;
 }
 
@@ -240,7 +155,7 @@ void timings(i965_t *driver, framebuffer_t fb[2], mode_t *mode)
 		fb[i].width = x;
 		fb[i].height = y;
 		fb[i].stride = fb[i].width * 4;
-		fb[i].address = 0; //4MiB
+		fb[i].address = i* 0x400000; //4MiB
 	
 		mode->width = x;
 		mode->height = y;
@@ -260,6 +175,8 @@ void timings(i965_t *driver, framebuffer_t fb[2], mode_t *mode)
 		pipe->pi_peasrc.v_image_size = mode->height -1;
 		
 	}
+	
+	
 	
 }
 

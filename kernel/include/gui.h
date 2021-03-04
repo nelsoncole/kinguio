@@ -61,6 +61,7 @@ void draw_char_transparent( int x, int y, int ch, unsigned int fg_color,
 							struct _font *font);
 int glyph(int ch);
 
-void restauro_de_tela();
+void update_gui(unsigned long memory, int width, int height );
+
 
 #endif

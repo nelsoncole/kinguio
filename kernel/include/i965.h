@@ -46,8 +46,9 @@ typedef struct _framebuffer {
 
 typedef struct _i965 {
 	unsigned short did, vid;
-	unsigned long mmio_base, memory, iobar;
-	
+	unsigned long phy_mmio, phy_memory, iobar;
+	unsigned long mmio_base, memory, cursor_memory;
+	 	
 }__attribute__ ((packed)) i965_t;
 
 
@@ -148,6 +149,9 @@ typedef volatile struct _DISPLAY_PIPELINE {
 }__attribute__ ((packed)) DISPLAY_PIPELINE;
 
 
+extern i965_t gtt[1];
+
+
 void disable_dac(i965_t *driver);
 void enable_dac(i965_t *driver);
 void disable_plane(i965_t *driver);
@@ -162,6 +166,8 @@ void timings(i965_t *driver, framebuffer_t fb[2], mode_t *mode);
 
 void gmbus_read(i965_t *driver,unsigned int offset, void *buffer, int size);
 
+void setup_cursor(i965_t *dev);
+void update_graphic_cursor(int x, int y );
 int setup_i965();
 
 

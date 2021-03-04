@@ -7,8 +7,18 @@
 #define EBDA (BDA + 0xE)
 
 
+typedef struct _ACPI_GENERIC_ADDRESS {
+    
+    	unsigned char space_id;    	// 0 - system memory, 1 - system I/O
+    	unsigned char bit_width;	// Size in bits of given register
+    	unsigned char bit_offset;	// Bit offset within the register 
+    	unsigned char access_width;  	// Minimum Access size (ACPI 3.0)
+    	unsigned long long address;	// 64-bit address of struct or register
 
-typedef struct _RSDP {
+}__attribute__ ((packed)) ACPI_GENERIC_ADDRESS;
+
+
+typedef struct _ACPI_TABLE_RSDP {
 
 	// ACPI Version 1.0
 	char signature[8];
@@ -23,7 +33,7 @@ typedef struct _RSDP {
  	unsigned char extended_check_sum;
  	unsigned char reserved[3];
    	
-}__attribute__ ((packed)) RSDP;
+}__attribute__ ((packed)) ACPI_TABLE_RSDP;
 
 typedef struct _RSDT {
 
@@ -41,10 +51,10 @@ typedef struct _RSDT {
     	unsigned int *entry; // 4*n
    	
    	
-}__attribute__ ((packed)) RSDT;
+}__attribute__ ((packed)) ACPI_TABLE_RSDT;
 
 
-typedef struct _XSDT {
+typedef struct _ACPI_TABLE_XSDT {
 
 	// ACPI Version 1.0
 	char signature[4];
@@ -60,9 +70,9 @@ typedef struct _XSDT {
     	unsigned long long *entry; // 8*n
    	
    	
-}__attribute__ ((packed)) XSDT;
+}__attribute__ ((packed)) ACPI_TABLE_XSDT;
 
-typedef struct _FADT {
+typedef struct _ACPI_TABLE_FADT {
 	// Header
     	char signature[4];
     	unsigned int length;
@@ -85,10 +95,10 @@ typedef struct _FADT {
   	unsigned char unneded4[89 - 72];
    	unsigned char PM1_CNT_LEN;
        
-}__attribute__ ((packed)) FADT;
+}__attribute__ ((packed)) ACPI_TABLE_FADT;
 
 
-typedef struct _DSDT {
+typedef struct _ACPI_TABLE_DSDT {
 	// Header
     	char signature[4];
     	unsigned int length;
@@ -101,10 +111,10 @@ typedef struct _DSDT {
     	unsigned int creator_revision;
     	unsigned int definition_block;
        
-}__attribute__ ((packed)) DSDT;
+}__attribute__ ((packed)) ACPI_TABLE_DSDT;
 
 
-typedef struct _HPET {
+typedef struct _ACPI_TABLE_HPET {
 	// Header
     	char signature[4];
     	unsigned int length;
@@ -115,7 +125,7 @@ typedef struct _HPET {
     	unsigned int oem_revision;
     	unsigned int creator_id;
     	unsigned int creator_revision;
-    	// Event Timer Block ID
+    	// Hardware ID of Event Timer Block
     	unsigned char hardware_rev_id;
     	unsigned char comparator_count:5;
     	unsigned char counter_size:1;
@@ -123,27 +133,23 @@ typedef struct _HPET {
     	unsigned char legacy_replacement:1;
     	unsigned short pci_vendor_id;
     	
-    	// BASE ADDRESS
-    	unsigned char address_space_id;    // 0 - system memory, 1 - system I/O
-    	unsigned char register_bit_width;
-    	unsigned char register_bit_offset;
-    	unsigned char reserved2;
-    	unsigned long long address;
+    	// Address of Event Timer Block
+    	ACPI_GENERIC_ADDRESS address;
     
     	unsigned char hpet_number;
     	unsigned short minimum_tick;
     	unsigned char page_protection;
     	   
-}__attribute__ ((packed)) HPET;
+}__attribute__ ((packed)) ACPI_TABLE_HPET;
 
-extern RSDP *rsdp;
-extern RSDT *rsdt;
-extern XSDT *xsdt;
-extern FADT *fadt;
-extern DSDT *dsdt;
-extern HPET *hpet;
+extern ACPI_TABLE_RSDP *rsdp;
+extern ACPI_TABLE_RSDT *rsdt;
+extern ACPI_TABLE_XSDT *xsdt;
+extern ACPI_TABLE_FADT *fadt;
+extern ACPI_TABLE_DSDT *dsdt;
+extern ACPI_TABLE_HPET *hpet;
 
-unsigned long acpi_probe(RSDT *_rsdt, XSDT *_xsdt, char *signature);
+unsigned long acpi_probe(ACPI_TABLE_RSDT *_rsdt, ACPI_TABLE_XSDT *_xsdt, char *signature);
 void setup_acpi();
 void poweroff(unsigned int timeout);
 
