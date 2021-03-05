@@ -60,7 +60,7 @@ void irq_function(unsigned int n){
     	// Chamda de função correspondente
     	call_function(addr, n);
 
-    	}else printf("Erro IRQ%d", n);
+    	}else printf("Erro IRQ%d\n", n);
 	
 	apic_eoi_register();
 	

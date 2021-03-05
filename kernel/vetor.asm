@@ -11,6 +11,8 @@ isr_jmp:
 
 	push gs
 	push fs
+	
+	PUSH_GPR
 
 	
 	mov ax, 0x10
@@ -20,12 +22,14 @@ isr_jmp:
 	;PUSH_FPU
 	;PUSH_XMM
 	
-	mov rdi, [rsp+16]
+	mov rdi, [rsp + 0x90]
+	
 	call fault_exception
 	
 	;POP_XMM
 	;POP_FPU
 
+	POP_GPR
 	
 	pop fs
 	pop gs
@@ -221,8 +225,11 @@ global irq20,irq21,irq22,irq23
 
 extern irq_function
 irq_jmp:
+
 	push gs
 	push fs
+	
+	PUSH_GPR
 
 	
 	mov ax, 0x10
@@ -232,13 +239,15 @@ irq_jmp:
 	;PUSH_FPU
 	;PUSH_XMM
 	
-	mov rdi, [rsp+16]
+	mov rdi, [rsp + 0x90]
 	call irq_function
+	
+	
 	
 	;POP_XMM
 	;POP_FPU
-
 	
+	POP_GPR
 	pop fs
 	pop gs
 	

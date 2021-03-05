@@ -7,7 +7,8 @@ LD=ld
 
 DRIVER = pci.o  i965.o cursor.o acpi.o hpet.o lpc.o pit.o ps2.o mouse.o keyboard.o
 LIB = string.o vsprintf.o stdio.o stdlib.o
-objs= setup.o main.o gui.o io.o font8x16.o gdt.o idt.o vetor.o exception.o paging.o mm.o cpuid.o msr.o lvt.o irq.o apic.o sleep.o $(DRIVER) $(LIB)
+objs= setup.o main.o gui.o io.o font8x16.o gdt.o idt.o vetor.o exception.o\
+paging.o mm.o cpuid.o msr.o lvt.o irq.o apic.o sleep.o shell.o $(DRIVER) $(LIB)
 .PHONY: kernel.bin
 	
 kernel.bin: $(objs)

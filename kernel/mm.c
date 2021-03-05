@@ -5,6 +5,7 @@
 #include <string.h>
 
 
+//Estas função é para mapear dispositvos, mm_mp(...)
 unsigned long g_mm_mp_index;
 pae_page_directory_t *device_pde;
 
@@ -108,4 +109,36 @@ int mm_mp( unsigned long phy_addr, unsigned long *virt_addr,unsigned size, int f
 	*(unsigned long*)(virt_addr) = (DEVICE_MEMORY_MAP + (index * 0x200000));
 	
 	return 0;
+}
+
+// TODO
+
+unsigned long alloc_pages_initialize()
+{
+
+	/*AllocTablePages = (UINT8*) ((_end) + 0x1000*256);
+	
+	// For 32 MiB = (8192*4KiB)
+	setmem((UINT8*)AllocTablePages,8192*sizeof(UINT8),0);
+
+	return ((UINTN)AllocTablePages);*/
+	
+	return 0;
+}
+
+/**
+ * Aloca bloco de 4KiB
+ *
+ **/
+unsigned long alloc_pages(int type, unsigned len, unsigned long *addr)
+{
+
+	return (0);
+
+}
+
+void free_pages(void *addr)
+{
+	
+
 }

@@ -113,7 +113,7 @@ void mouse_handler(void) {
 			break;
 			case 2:
 				if(buttons & 0x20) // negative
-					mouse_y = (int) mouse_read() | 0xFFFFFF00;
+					mouse_y = (int)  inportb(0x60) | 0xFFFFFF00;
 				else
 					mouse_y = (int) inportb(0x60);
 				
@@ -159,6 +159,7 @@ static void mouse_refresh(){
 	mouse->y -= mouse_y; // Coordenada Y
 	mouse->z += 0;
 	mouse->b = buttons;
+	
 
 	
 	if(mouse->x < 0) mouse->x = 0;
@@ -167,8 +168,8 @@ static void mouse_refresh(){
      	else if(mouse->y >altura_da_tela ) mouse->y = altura_da_tela;
 
 	
-    	//	clears_creen();	
-     	// printf("(%d,%x,%d) ",mouse_x, mouse->b ,mouse_y );
+    	//clears_creen();	
+     	//printf("(%d,%x,%d) ",mouse_x, mouse->b ,mouse->y );
      	
      	update_graphic_cursor(mouse->x, mouse->y);
      	

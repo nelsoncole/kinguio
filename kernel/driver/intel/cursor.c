@@ -81,5 +81,7 @@ void setup_cursor(i965_t *dev)
 
 void update_graphic_cursor(int x, int y ){
 
+	if(!gtt->INTEL) return;
+
 	*(unsigned int*)(gtt->mmio_base + 0x70088) = (x &0x7fff) | (y &0x7fff) << 16;
 }

@@ -82,7 +82,7 @@ void refresh_rate()
 
 void clears_creen() 
 {
-	memset((char*)(unsigned long)gui->virtual_buffer/*G->BankBuffer*/,0,gui->width * (gui->height) * (gui->bpp/8));
+	memset((char*)(unsigned long)gui->virtual_buffer,0,gui->width * (gui->height) * (gui->bpp/8));
 	
 	gui->cursor_x = gui->cursor_y = 0;
 	

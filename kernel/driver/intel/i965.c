@@ -8,6 +8,8 @@
 
 
 i965_t gtt[1];
+framebuffer_t fb[2];
+mode_t mode[1];
 
 int i965_pci_init(int bus, int dev, int fun)
 {	
@@ -44,9 +46,11 @@ int i965_pci_init(int bus, int dev, int fun)
 	return 0;
 }
 
-framebuffer_t fb[2];
-mode_t mode[1];
+
 int setup_i965(){
+
+
+	memset(gtt, 0, sizeof(i965_t));
 
 	unsigned int data = pci_scan_bcc(3);
 	
@@ -63,6 +67,13 @@ int setup_i965(){
 	if((gtt->vid &0xffff) != 0x8086) { 
 		
 		printf("Graphic Native Intel, not found, device id %x, vendor id %x\n",gtt->did,gtt->vid);
+		
+		
+		unsigned long virt_addr;
+		mm_mp(gui->frame_buffer, (unsigned long*)&virt_addr, 0x800000/*8MiB*/, 0);
+		gui->virtual_buffer = virt_addr;
+		
+		
 		return 1;
 	}
 	
@@ -70,6 +81,7 @@ int setup_i965(){
 	
 	//Mapear o mmio_base e memória de vídeo
 	mm_mp( gtt->phy_mmio, &gtt->mmio_base, 0x100000, 0);
+	mm_mp(gtt->phy_memory, (unsigned long*)&gtt->memory, 0x1000000/*16MiB*/, 0);
 	
 	/*char edid[128];
 	
@@ -128,6 +140,7 @@ int setup_i965(){
 	setup_cursor(gtt);
 	
 	// fim
+	gtt->INTEL = 1;
 	update_gui(gtt->memory, mode->width, mode->height );
 	
 	

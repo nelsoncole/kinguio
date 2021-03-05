@@ -48,6 +48,7 @@ typedef struct _i965 {
 	unsigned short did, vid;
 	unsigned long phy_mmio, phy_memory, iobar;
 	unsigned long mmio_base, memory, cursor_memory;
+	int INTEL;
 	 	
 }__attribute__ ((packed)) i965_t;
 

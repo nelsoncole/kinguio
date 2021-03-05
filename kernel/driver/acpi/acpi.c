@@ -292,17 +292,35 @@ void setup_acpi()
 }
 
 // Credito: kaworu (https://forum.osdev.org/viewtopic.php?t=16990)
-void poweroff(unsigned int timeout) {
-   	
-   	sleep(timeout);
+void poweroff() {
 
    	// enviar o comando shutdown
    	outportw(fadt->PM1a_CNT_BLK, SLP_TYPa | 1<<13 );
    	
    	if ( fadt->PM1b_CNT_BLK != 0 ) {
-   	
+ 
       		outportw(fadt->PM1b_CNT_BLK, SLP_TYPb | 1<<13 );
+      		
 	}
 	
-   	printf("acpi desligamento falhou\n");
+}
+
+
+void reboot()
+{
+	if(rsdp->revision >= 0x2) {
+	
+		outportb(fadt->ResetRegister.address, fadt->ResetValue);
+	} else {
+	
+		unsigned char val = 0x02;
+    		while ( val & 0x02) {
+    		
+      			val = inportb(0x64);
+    		}		
+    		
+    		outportb(0x64, 0xFE);
+    		
+    		hlt();
+	}
 }
