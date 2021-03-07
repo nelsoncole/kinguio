@@ -7,7 +7,7 @@
 
 #include <data.h>
 
-
+#define GUI_VIRTUAL_BUFFER 0x3C00000
 
 pml4_table_t *pml4e = (pml4_table_t *)PAGING_ADDR;
 pae_page_directory_pointer_table_t *pdpte = (pae_page_directory_pointer_table_t*) (PAGING_ADDR + 0x1000);
@@ -55,9 +55,9 @@ void page_install(void)
 	//PAE PTE
 	memset(pte,0,512*sizeof(pae_page_table_t)*36);
 	
-	//64 MiB
+	//58 MiB
 	addr = 0;
-	for(i=0;i < 512*32; i++) {
+	for(i=0;i < 512*30; i++) {
 		
 		pte->p = 1;
 		pte->rw = 1;
@@ -68,9 +68,9 @@ void page_install(void)
 	}
 	
 	
-	// Linear Frame BUffer 8 MiB
+	// Linear Frame BUffer 4 MiB
 	addr = (unsigned long)gui->frame_buffer;
-	for(i=0;i < 512 * 4; i++) {
+	for(i=0;i < 512 * 2; i++) {
 		
 		pte->p = 1;
 		pte->rw = 1;
@@ -83,7 +83,7 @@ void page_install(void)
 	
 	memset(pde,0,512*sizeof(pae_page_directory_t));
 	addr = (unsigned long)pae_pte;
-	for(i=0;i < 36; i++) {
+	for(i=0;i < 32; i++) {
 		
 		pde->p = 1;
 		pde->rw = 1;
@@ -122,6 +122,6 @@ void page_install(void)
 	wait(400);
 	
 	// Update gui->virtual_buffer
-	gui->virtual_buffer = 0x4000000;
+	gui->virtual_buffer = GUI_VIRTUAL_BUFFER;
 	
 }

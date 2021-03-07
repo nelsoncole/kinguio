@@ -93,7 +93,7 @@ void setup_hpet(unsigned int hertz) {
 	
 	}else {
 	
-		printf("HPET not found\n");
+		printf("HPET not found, the chipset must be old...\n");
 	}
 	
 

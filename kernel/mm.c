@@ -18,10 +18,10 @@ void initialize_mm_mp()
 	unsigned long addr = (unsigned long) device_pde;
 	
 	// 0xC0000000  3GiB
-	pdpte[PDPTE_ENTRY].p = 1;
-	pdpte[PDPTE_ENTRY].rw = 1;
-	pdpte[PDPTE_ENTRY].pcd= 1;
-	pdpte[PDPTE_ENTRY].phy_addr_pd = (addr >> 12) &0xfffffffff;
+	pdpte[DEVICE_PDPTE_ENTRY].p = 1;
+	pdpte[DEVICE_PDPTE_ENTRY].rw = 1;
+	pdpte[DEVICE_PDPTE_ENTRY].pcd= 1;
+	pdpte[DEVICE_PDPTE_ENTRY].phy_addr_pd = (addr >> 12) &0xfffffffff;
 	
 	
 	g_mm_mp_index = 0;
@@ -35,7 +35,6 @@ int mm_mp( unsigned long phy_addr, unsigned long *virt_addr,unsigned size, int f
 	
 	pae_page_table_t *pte = (pae_page_table_t *) (DEVICE_PAGE_TABLE + (0x1000*g_mm_mp_index));
 	pae_page_table_t *__pte = pte;
-	
 	
 	unsigned long addr = phy_addr;
 	int index = g_mm_mp_index;
@@ -112,16 +111,94 @@ int mm_mp( unsigned long phy_addr, unsigned long *virt_addr,unsigned size, int f
 }
 
 // TODO
+// 0x2000000 -- 0x3000000 -- 16 MiB RAM_BITMAP
+// 0x3000000 -- 0x3001000 -- 4 KiB ALLOC_PAGE_DIR
+// 0x3001000 -- 0x3201000 -- 2 MiB ALLOC_PAGE_TABLE
 
-unsigned long alloc_pages_initialize()
+unsigned char *RAM_BITMAP;
+pae_page_directory_t *alloc_pde;
+pae_page_table_t *alloc_pte;
+unsigned long ram_setup(unsigned long entry_pointer_info)
 {
 
-	/*AllocTablePages = (UINT8*) ((_end) + 0x1000*256);
+	RAM_BITMAP = (unsigned char*) (0x2000000);
 	
-	// For 32 MiB = (8192*4KiB)
-	setmem((UINT8*)AllocTablePages,8192*sizeof(UINT8),0);
+	// Reserved Kernel 64MiB
+	int len = ((64*1024)/4)/8;
+	
+	memset(RAM_BITMAP, -1, len);
+	
+	// Free 64 MiB to 128 MiB
+	int offset = len;
+	len = (((128 - 64)*1024)/4)/8;
+	
+	memset(RAM_BITMAP + offset, 0, len);
 
-	return ((UINTN)AllocTablePages);*/
+	return ((unsigned long) RAM_BITMAP);
+}
+
+unsigned long alloc_frame()
+{
+	unsigned char *bmp = RAM_BITMAP + 2048;
+	
+	for(unsigned int i = 0; i <  2048; i++ ){
+	
+		for(int t = 0; t < 8; t++) {
+		
+			if( !(*bmp >> t &0x1) ) {
+			
+				*bmp |= 1 << t;
+				return 0x4000000 + ( (i*8+t)*0x1000); //64MiB +++
+			}
+		}
+		
+		bmp++;
+	}
+	
+	return 0;
+}
+
+unsigned long alloc_pages_setup(unsigned long entry_pointer_info)
+{
+	alloc_pde = (pae_page_directory_t *) (0x3000000);
+	pae_page_directory_t *pde = alloc_pde;
+	memset( pde,0, 512*sizeof(pae_page_directory_t));
+	
+	
+	alloc_pte = (pae_page_table_t *) (0x3001000);
+	pae_page_table_t *pte = alloc_pte;
+	memset(pte, 0, 512*sizeof(pae_page_table_t) *512);
+	
+	unsigned long addr = 0;
+	// 1 GiB
+	for(int i=0;i < 512*512; i++) {
+		
+		pte->p = 0;
+		pte->rw = 1;
+		pte->frames = (addr >>12) &0xffffffffffff;
+		pte++;
+		
+	}
+	
+	addr = (unsigned long) alloc_pte;
+	for(int i=0;i < 512; i++) {
+		
+		pde->p = 1;
+		pde->rw = 1;
+		//if(i > 31) pde->us = 1;
+		pde->phy_addr_pt = (addr >>12) &0xffffffffffff;
+		
+		addr +=0x1000;
+		pde++;
+	}
+	
+	// 0x40000000  1GiB
+	addr = (unsigned long) alloc_pde;
+	pdpte[1].p = 1;
+	pdpte[1].rw = 1;
+	pdpte[1].pcd= 1;
+	pdpte[1].phy_addr_pd = (addr >> 12) &0xffffffffffff;
+	
 	
 	return 0;
 }
@@ -132,8 +209,35 @@ unsigned long alloc_pages_initialize()
  **/
 unsigned long alloc_pages(int type, unsigned len, unsigned long *addr)
 {
+	//pae_page_directory_t *pde = alloc_pde;
+	pae_page_table_t *pte = alloc_pte;
+	
+	int index = 0;
+	
+	for(int i = 0; i < 512*512; i++)
+	{
+		if(pte->p == 0) {
+			index = i;
+			
+			for(int y=0; y < len; y++) {
+				unsigned long frame = alloc_frame();
+				pte->p = 1;
+				pte->frames = (frame >>12) &0xffffffffffff;
+				
+				pte++;
+			}
+			
+			break;
+		}
+	
+		pte++;
+	}
+	
+	
+	
+	*(unsigned long*)(addr) = (ALLOC_PAGE_MEMORY + (index * 0x1000));
 
-	return (0);
+	return (len);
 
 }
 
@@ -142,3 +246,4 @@ void free_pages(void *addr)
 	
 
 }
+

@@ -1,22 +1,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-void initialize_heap(unsigned int start)
-{
-	//heap = start;
+#include <mm.h>
+
+void *malloc(unsigned size) {
+
+	unsigned long addr;
 	
-}
-
-void *malloc(size_t size)
-{
-	//heap += size;
-	return (void*)(0/*heap - size*/);
-}
-
-void free(void *buffer)
-{
+	int len = size/0x1000;
+	if(size%0x1000) len++;
+	
+	alloc_pages(0, len, &addr);
+	
+	return (void*)(addr);
 
 }
+
+
+void free(void *ptr) {
+
+	free_pages(ptr);
+}
+
 
 #define HEX_LEN 8
 
@@ -104,3 +109,4 @@ char *itoa (int val, char *str)
 
 	return str;
 }
+

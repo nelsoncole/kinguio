@@ -3,6 +3,8 @@
 #include <string.h>
 #include <gui.h>
 
+#include <file.h>
+
 
 int putchar(int c)
 {
@@ -61,8 +63,13 @@ FILE *fopen (const char *path,const char *mode)
 {
 	if(mode[0] == '\0') return NULL;
 
-
-	FILE *fp = 0;//TODO = open_file(path,mode);
+	FILE *fp;
+	
+	if(memcmp((char*)mode, "std", 3) == 0 ) 
+	{
+	 	fp = std_open_file(path ,mode);
+	 	
+	} else fp = 0;//TODO = open_file(path,mode);
 
 	return fp;
 	
@@ -121,9 +128,31 @@ long int ftell(FILE *fp)
 
 }
 
+
+int fputc (int ch, FILE *fp) 
+{
+	if(fp->flags == 2 || fp->flags == 3 || fp->flags == 4 ) return std_putc (ch, fp);
+	
+	return 0;
+
+}
+
 int fgetc (FILE *fp)
 {	
 	int r;
+	
+	if(fp->flags == 2 || fp->flags == 3 || fp->flags == 4 ) { 
+	
+		r = std_getc (fp);
+		
+		// display console	
+		if(r != '\b' || fp->flags == 2 ) { 
+		
+			std_putc (r, stdout);
+		}
+		
+		return r;
+	}
 	
 	if(fp->off >= fp->fsize) {
 	

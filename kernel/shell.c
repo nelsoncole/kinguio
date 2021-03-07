@@ -10,8 +10,6 @@
 
 #define SHELL_CMD_NUM 18
 
-extern unsigned char keyboard_charset[1];
-
 void (*call_loader)  (int argc,char **argv) = 0;
 
 typedef struct _COMMAND {
@@ -68,19 +66,12 @@ void shell() {
 	char argv[256];
 	memset(argv,0,256);
 	
-	cli();
-	keyboard_charset[0] = 0;
-	sti();
 	
 	printf("\n\n~ $ ");
 	
 	while(1) {
 	
-		cli();
-		ch = keyboard_charset[0];
-		keyboard_charset[0] = 0;
-		sti();
-
+		ch = fgetc(stdin);
 
 		if(ch != 0)
 		{

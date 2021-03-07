@@ -20,6 +20,16 @@
 #define SEEK_CUR	1
 #define SEEK_END	2
 
+struct _FILE;
+// Standard streams.
+extern struct _FILE *stdin;
+extern struct _FILE *stdout;
+extern struct _FILE *stderr;
+
+// C89/C99 say they're macros.  Make them happy.
+#define stdin stdin
+#define stdout stdout
+#define stderr stderr
 
 
 int vsprintf(char * str,const char * fmt, va_list ap);
@@ -54,7 +64,7 @@ typedef struct _FILE {
 	unsigned 	istemp;	// Indicador de arquivo temporário
 	short 		token;		// Usado para verificação de validade
 	//
-	unsigned char 	mode[4];
+	unsigned char 	mode;		// 0x1 r, 0x2 r/w
 	unsigned int	off;
 	unsigned int	off2;
 	//
@@ -79,6 +89,7 @@ long int ftell(FILE *fp);
 
 FILE *fopen (const char *path,const char *mode);
 int fclose(FILE *fp);
+int fputc (int ch, FILE *fp);
 int fgetc (FILE *fp);
 size_t fread (void *buffer,size_t size, size_t count, FILE *fp);
 

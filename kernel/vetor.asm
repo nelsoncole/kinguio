@@ -12,15 +12,32 @@ isr_jmp:
 	push gs
 	push fs
 	
-	PUSH_GPR
+	push r15
+	push r14
+	push r13
+	push r12
+	push r11
+	push r10
+	push r9
+	push r8
+	push rdi
+	push rsi
+	push rbp
+	push rsp
+	push rbx
+	push rdx
+	push rcx
+	push rax
+      	
+      	;PUSH_FPU
+	;PUSH_XMM
+	
+
 
 	
 	mov ax, 0x10
 	mov gs,ax
 	mov fs,ax
-	
-	;PUSH_FPU
-	;PUSH_XMM
 	
 	mov rdi, [rsp + 0x90]
 	
@@ -29,7 +46,22 @@ isr_jmp:
 	;POP_XMM
 	;POP_FPU
 
-	POP_GPR
+	pop rax
+	pop rcx
+	pop rdx
+	pop rbx
+	pop rsp
+	pop rbp
+	pop rsi
+	pop rdi
+	pop r8
+	pop r9
+	pop r10
+	pop r11
+	pop r12
+	pop r13
+	pop r14
+	pop r15
 	
 	pop fs
 	pop gs
@@ -228,16 +260,31 @@ irq_jmp:
 
 	push gs
 	push fs
-	
-	PUSH_GPR
+      	
+      	push r15
+	push r14
+	push r13
+	push r12
+	push r11
+	push r10
+	push r9
+	push r8
+	push rdi
+	push rsi
+	push rbp
+	push rsp
+	push rbx
+	push rdx
+	push rcx
+	push rax
+      	
+      	;PUSH_FPU
+	;PUSH_XMM
 
 	
 	mov ax, 0x10
 	mov gs,ax
 	mov fs,ax
-	
-	;PUSH_FPU
-	;PUSH_XMM
 	
 	mov rdi, [rsp + 0x90]
 	call irq_function
@@ -246,8 +293,24 @@ irq_jmp:
 	
 	;POP_XMM
 	;POP_FPU
+
+	pop rax
+	pop rcx
+	pop rdx
+	pop rbx
+	pop rsp
+	pop rbp
+	pop rsi
+	pop rdi
+	pop r8
+	pop r9
+	pop r10
+	pop r11
+	pop r12
+	pop r13
+	pop r14
+	pop r15
 	
-	POP_GPR
 	pop fs
 	pop gs
 	

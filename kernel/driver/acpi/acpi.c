@@ -309,18 +309,19 @@ void poweroff() {
 void reboot()
 {
 	if(rsdp->revision >= 0x2) {
-	
 		outportb(fadt->ResetRegister.address, fadt->ResetValue);
-	} else {
+	}	
+
+	printf("Use the 8042 keyboard controller to pulse the CPU's RESET pin\n");
 	
-		unsigned char val = 0x02;
-    		while ( val & 0x02) {
+	unsigned char val = 0x02;
+    	while ( val & 0x02) {
     		
-      			val = inportb(0x64);
-    		}		
+      		val = inportb(0x64);
+    	}		
     		
-    		outportb(0x64, 0xFE);
+    	outportb(0x64, 0xFE);
     		
-    		hlt();
-	}
+    	while(1) hlt();
+	
 }

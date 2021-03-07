@@ -167,7 +167,7 @@ void keyboard_handler(void)
 
 		if( (keyboard_charset[0] &0xff) != 0) { 
 		
-			//fputc(keyboard_charset &0xff,fd->stdin);
+			fputc(keyboard_charset[0] &0xff, stdin);
 		}
         }	
 

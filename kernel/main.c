@@ -21,6 +21,8 @@
 #include <sleep.h>
 
 
+#define false 0
+#define true 1
 
 extern void shell();
 
@@ -46,11 +48,14 @@ void main(unsigned long entry_pointer_info)
 	setup_apic();
 	setup_ioapic();
 	
+	
+	pit_enable(false);
 	setup_hpet(100);
 	apic_timer_umasked();
 	ioapic_umasked(1);
 	ioapic_umasked(2);
 	ioapic_umasked(12);
+	
 	
 	 
 	
@@ -65,10 +70,20 @@ void main(unsigned long entry_pointer_info)
 	
 	printf("Sirius OS (Kernel mode: AMD64 or x86_64)\nCPU: %s\n",cpu_name);
 	
+	ram_setup(entry_pointer_info);
+	alloc_pages_setup(entry_pointer_info);
+	
+	stdin = fopen (0, "stdin");
+	
+	stdout = fopen (0, "stdout");
+	
+	stderr = fopen (0, "stderr");
+	
 	
 	// TODO drivers de interface
 	keyboard_install();
 	mouse_install();
+	
 	
 	sti();
 	
@@ -81,6 +96,8 @@ void main(unsigned long entry_pointer_info)
 		sti();
 	}*/
 	
+	
+	//printf("Leu %c\n",fgetc(stdin));
 	
 	shell();
 	

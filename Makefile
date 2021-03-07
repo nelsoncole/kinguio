@@ -30,9 +30,9 @@ clean:
 	rm disk.vhd
 
 test:
-	qemu-system-x86_64 -m 64 -drive file=disk.vhd,format=raw,bus=0
+	qemu-system-x86_64 -m 128 -drive file=disk.vhd,format=raw,bus=0
 test2:
-	qemu-system-x86_64 -m 64 -trace enable=usb* -device usb-ehci,id=ehci -drive if=none,id=usbstick,file=disk.vhd -device usb-storage,bus=ehci.0,drive=usbstick
+	qemu-system-x86_64 -m 128 -trace enable=usb* -device usb-ehci,id=ehci -drive if=none,id=usbstick,file=disk.vhd -device usb-storage,bus=ehci.0,drive=usbstick
 	
 fs:
 	gcc -Wall -C fs.c -o fs
